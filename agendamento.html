@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Agendamento</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="bg-gradient-to-br from-pink-100 to-pink-200 min-h-screen flex items-center justify-center p-4">
+
+  <div class="bg-white rounded-3xl shadow-xl p-6 w-full max-w-md">
+
+    <div class="text-center mb-6">
+
+      <img
+        id="logo"
+        src="https://placehold.co/100x100/png"
+        class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-pink-200 mb-3"
+      >
+
+      <h1
+        id="studioName"
+        class="text-2xl font-bold"
+      >
+        Studio
+      </h1>
+
+    </div>
+
+    <label class="font-semibold">
+      Serviço
+    </label>
+
+    <select
+      id="service"
+      class="w-full p-3 border rounded-xl mb-4"
+    >
+      <option>Manicure - R$30</option>
+      <option>Pedicure - R$40</option>
+      <option>Alongamento - R$80</option>
+    </select>
+
+    <label class="font-semibold">
+      Data
+    </label>
+
+    <input
+      type="date"
+      id="date"
+      class="w-full p-3 border rounded-xl mb-4"
+    >
+
+    <label class="font-semibold">
+      Horário
+    </label>
+
+    <div
+      id="times"
+      class="grid grid-cols-3 gap-2 mb-4"
+    ></div>
+
+    <input
+      id="name"
+      placeholder="Seu nome"
+      class="w-full p-3 border rounded-xl mb-3"
+    >
+
+    <input
+      id="phone"
+      placeholder="WhatsApp"
+      class="w-full p-3 border rounded-xl mb-4"
+    >
+
+    <button
+      onclick="agendar()"
+      class="w-full bg-pink-500 text-white p-3 rounded-xl font-bold"
+    >
+      Confirmar agendamento
+    </button>
+
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const supabase = window.supabase.createClient(
+    "https://bjaurtrqrasznuptthyf.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
+  );
+
+  const params =
+    new URLSearchParams(window.location.search);
+
+  const username =
+    params.get("studio");
+
+  if (!username) {
+    alert("Studio não encontrado");
+    return;
+  }
+
+  // 🔍 PEGAR PERFIL
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("username", username)
+    .single();
+
+  if (!profile) {
+    alert("Studio não encontrado");
+    return;
+  }
+
+  // 🎨 SETAR PERFIL
+  document.getElementById("studioName")
+    .innerText = profile.studio_name;
+
+  if (profile.logo_url) {
+    document.getElementById("logo")
+      .src = profile.logo_url;
+  }
+
+});
+</script>
+
+</body>
+</html>

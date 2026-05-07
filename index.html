@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agendamento</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-pink-50 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-6 rounded-2xl shadow-md w-full max-w-md">
+
+    <h1 class="text-2xl font-bold text-center mb-4">
+      Agendamento 💅
+    </h1>
+
+    <!-- SERVIÇOS -->
+    <label class="block mb-2 font-semibold">Escolha o serviço</label>
+    <select id="service" class="w-full p-2 border rounded mb-4">
+      <option value="30">Manicure - R$30</option>
+      <option value="40">Pedicure - R$40</option>
+      <option value="80">Alongamento - R$80</option>
+    </select>
+
+    <!-- DATA -->
+    <label class="block mb-2 font-semibold">Escolha a data</label>
+    <input type="date" id="date" class="w-full p-2 border rounded mb-4"/>
+
+    <!-- HORÁRIOS -->
+    <label class="block mb-2 font-semibold">Horário</label>
+    <div id="times" class="grid grid-cols-3 gap-2 mb-4"></div>
+
+    <!-- FORM -->
+    <input type="text" id="name" placeholder="Seu nome" class="w-full p-2 border rounded mb-2"/>
+    <input type="text" id="phone" placeholder="WhatsApp" class="w-full p-2 border rounded mb-4"/>
+
+    <button onclick="agendar()" class="w-full bg-pink-500 text-white p-3 rounded-xl font-bold">
+      Confirmar agendamento
+    </button>
+
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

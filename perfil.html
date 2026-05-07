@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Perfil</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="bg-gradient-to-br from-pink-100 to-pink-200 min-h-screen flex items-center justify-center p-4">
+
+  <div class="bg-white p-6 rounded-3xl shadow-xl w-full max-w-sm">
+
+    <h2 class="text-2xl font-bold text-center mb-5">
+      Meu Studio 💅
+    </h2>
+
+    <!-- NOME -->
+    <input
+      id="studio"
+      placeholder="Nome do Studio"
+      class="w-full mb-4 p-3 border rounded-xl"
+    >
+
+    <!-- USERNAME -->
+    <input
+      id="username"
+      placeholder="Seu link (ex: sophia)"
+      class="w-full mb-4 p-3 border rounded-xl"
+    >
+
+    <!-- UPLOAD -->
+    <input
+      type="file"
+      id="logoFile"
+      class="w-full mb-4"
+      accept="image/*"
+    >
+
+    <!-- PREVIEW -->
+    <img
+      id="preview"
+      class="w-24 h-24 rounded-full mx-auto object-cover mb-4 border-4 border-pink-200"
+      src="https://placehold.co/100x100/png"
+    >
+
+    <!-- LINK PÚBLICO -->
+    <div
+      id="publicLink"
+      class="bg-pink-50 p-3 rounded-xl text-sm text-center mb-4 hidden"
+    ></div>
+
+    <!-- BOTÃO -->
+    <button
+      id="salvar"
+      class="w-full bg-pink-500 hover:bg-pink-600 transition text-white p-3 rounded-xl font-bold"
+    >
+      Salvar perfil
+    </button>
+
+    <!-- MSG -->
+    <p
+      id="msg"
+      class="text-center text-sm mt-3"
+    ></p>
+
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+  // 🔗 SUPABASE
+  const supabase = window.supabase.createClient(
+    "https://bjaurtrqrasznuptthyf.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
+  );
+
+  // 🔐 USER
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // 🎯 ELEMENTOS
+  const studioInput =
+    document.getElementById("studio");
+
+  const usernameInput =
+    document.getElementById("username");
+
+  const logoInput =
+    document.getElementById("logoFile");
+
+  const preview =
+    document.getElementById("preview");
+
+  const msg =
+    document.getElementById("msg");
+
+  const publicLink =
+    document.getElementById("publicLink");
+
+  let logoUrl = "";
+
+  // 🔍 CARREGAR PERFIL
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (profile) {
+
+    studioInput.value =
+      profile.studio_name || "";
+
+    usernameInput.value =
+      profile.username || "";
+
+    // 🎨 LOGO
+    if (profile.logo_url) {
+
+      logoUrl =
+        profile.logo_url;
+
+      preview.src =
+        logoUrl;
+    }
+
+    // 🔗 LINK
+    if (profile.username) {
+
+      publicLink.classList.remove("hidden");
+
+      publicLink.innerHTML = `
+        🔗 Seu link público:<br>
+        <span class="font-bold text-pink-600">
+          agendamento.html?studio=${profile.username}
+        </span>
+      `;
+    }
+
+  }
+
+  // 👁️ PREVIEW IMAGEM
+  logoInput.addEventListener("change", () => {
+
+    const file =
+      logoInput.files[0];
+
+    if (!file) return;
+
+    preview.src =
+      URL.createObjectURL(file);
+
+  });
+
+  // 💾 SALVAR PERFIL
+  document.getElementById("salvar")
+    .addEventListener("click", async () => {
+
+    msg.innerText = "Salvando...";
+
+    const file =
+      logoInput.files[0];
+
+    // 📤 UPLOAD LOGO
+    if (file) {
+
+      const fileName =
+        `${user.id}-${Date.now()}`;
+
+      const { error: uploadError } =
+        await supabase.storage
+          .from("logos")
+          .upload(fileName, file, {
+            upsert: true
+          });
+
+      if (uploadError) {
+
+        console.log(uploadError);
+
+        msg.innerText =
+          "Erro upload logo";
+
+        return;
+      }
+
+      // 🔗 URL
+      const { data } =
+        supabase.storage
+          .from("logos")
+          .getPublicUrl(fileName);
+
+      logoUrl =
+        data.publicUrl;
+
+    }
+
+    // 🚨 VALIDAR USERNAME
+    const username =
+      usernameInput.value
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "");
+
+    if (!username) {
+
+      msg.innerText =
+        "Escolha um link";
+
+      return;
+    }
+
+    // 💾 SALVAR
+    const { error } =
+      await supabase
+        .from("profiles")
+        .upsert({
+          id: user.id,
+          studio_name: studioInput.value,
+          logo_url: logoUrl,
+          username: username
+        });
+
+    if (error) {
+
+      console.log(error);
+
+      msg.innerText =
+        "Erro ao salvar";
+
+      return;
+    }
+
+    // 🔗 MOSTRAR LINK
+    publicLink.classList.remove("hidden");
+
+    publicLink.innerHTML = `
+      🔗 Seu link público:<br>
+      <span class="font-bold text-pink-600">
+        agendamento.html?studio=${username}
+      </span>
+    `;
+
+    msg.innerText =
+      "Perfil salvo!";
+
+  });
+
+});
+</script>
+
+</body>
+</html>

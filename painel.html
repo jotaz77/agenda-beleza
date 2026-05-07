@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-pink-100 via-pink-200 to-purple-200 p-6">
+
+  <div class="max-w-3xl mx-auto">
+
+    <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">
+      Agenda 💅
+    </h1>
+
+  <div class="bg-white rounded-3xl shadow-lg p-6 mb-6 text-center">
+
+    <img
+      id="logo"
+      src="https://placehold.co/100x100/png"
+      class="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-pink-200"
+    >
+
+    <h1
+      id="studioName"
+      class="text-2xl font-bold text-gray-800"
+    >
+      Meu Studio
+    </h1>
+
+    <p class="text-gray-500 text-sm">
+      Painel profissional ✨
+    </p>
+
+  </div>
+
+    <!-- FILTROS -->
+    <div class="flex justify-center gap-3 mb-6">
+
+      <button onclick="filtrar('booked')" id="btn-booked"
+        class="px-4 py-2 rounded-xl bg-white text-gray-700 shadow transition">
+        Agendados
+      </button>
+
+      <button onclick="filtrar('done')" id="btn-done"
+        class="px-4 py-2 rounded-xl bg-white text-gray-700 shadow transition">
+        Concluídos
+      </button>
+
+      <button onclick="filtrar('cancelled')" id="btn-cancelled"
+        class="px-4 py-2 rounded-xl bg-white text-gray-700 shadow transition">
+        Cancelados
+      </button>
+
+    </div>
+
+    <!-- LISTA -->
+    <div id="lista" class="space-y-4"></div>
+
+  </div>
+
+  <script src="painel.js"></script>
+</body>
+</html>

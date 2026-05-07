@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="bg-pink-100 flex items-center justify-center h-screen">
+
+  <div class="bg-white p-6 rounded-xl shadow w-80">
+
+    <h2 class="text-xl mb-4 text-center">Login 💅</h2>
+
+    <input id="email" type="email" placeholder="Email"
+      class="w-full mb-2 p-2 border rounded">
+
+    <input id="password" type="password" placeholder="Senha"
+      class="w-full mb-4 p-2 border rounded">
+
+    <button id="btnLogin"
+      class="w-full bg-pink-500 text-white p-2 rounded mb-2">
+      Entrar
+    </button>
+
+    <button id="btnSignup"
+      class="w-full border p-2 rounded">
+      Criar conta
+    </button>
+
+    <p id="msg" class="text-center text-sm mt-2 text-red-500"></p>
+
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // 🔗 UMA ÚNICA VEZ
+  const supabase = window.supabase.createClient(
+    "https://bjaurtrqrasznuptthyf.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
+  );
+
+  const msg = document.getElementById("msg");
+
+  document.getElementById("btnLogin").addEventListener("click", async () => {
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    msg.innerText = "Entrando...";
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      msg.innerText = error.message;
+      return;
+    }
+
+    window.location.href = "painel.html";
+  });
+
+  document.getElementById("btnSignup").addEventListener("click", async () => {
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (password.length < 6) {
+      msg.innerText = "Senha mínima 6 caracteres";
+      return;
+    }
+
+    msg.innerText = "Criando conta...";
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password
+    });
+
+    if (error) {
+      msg.innerText = error.message;
+      return;
+    }
+
+    msg.innerText = "Conta criada! Agora clique em entrar.";
+  });
+
+});
+</script>
+
+</body>
+</html>
