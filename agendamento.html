@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+
   <meta charset="UTF-8">
-  <title>Agendamento</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Agendamento
+  </title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
 
 <body class="bg-gradient-to-br from-pink-100 to-pink-200 min-h-screen flex items-center justify-center p-4">
@@ -39,9 +50,9 @@
       id="service"
       class="w-full p-3 border rounded-xl mb-4"
     >
-      <option>Manicure - R$30</option>
-      <option>Pedicure - R$40</option>
-      <option>Alongamento - R$80</option>
+      <option>
+        Carregando serviços...
+      </option>
     </select>
 
     <!-- DATA -->
@@ -81,7 +92,16 @@
     <!-- BOTÃO -->
     <button
       onclick="agendar()"
-      class="w-full bg-pink-500 hover:bg-pink-600 transition text-white p-3 rounded-xl font-bold"
+      class="
+        w-full
+        bg-pink-500
+        hover:bg-pink-600
+        transition
+        text-white
+        p-3
+        rounded-xl
+        font-bold
+      "
     >
       Confirmar agendamento
     </button>
@@ -89,6 +109,7 @@
   </div>
 
 <script>
+
 document.addEventListener("DOMContentLoaded", async () => {
 
   // 🔗 SUPABASE
@@ -157,6 +178,67 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("logo")
       .src =
         profile.logo_url;
+  }
+
+  // 💅 CARREGAR SERVIÇOS
+  const serviceSelect =
+    document.getElementById("service");
+
+  const {
+    data: services,
+    error: servicesError
+  } = await supabase
+    .from("services")
+    .select("*")
+    .eq("user_id", profile.id)
+    .eq("active", true)
+    .order("created_at", {
+      ascending: true
+    });
+
+  if (servicesError) {
+
+    console.log(servicesError);
+
+    serviceSelect.innerHTML = `
+      <option>
+        Erro ao carregar serviços
+      </option>
+    `;
+
+  } else if (!services || services.length === 0) {
+
+    serviceSelect.innerHTML = `
+      <option>
+        Nenhum serviço disponível
+      </option>
+    `;
+
+  } else {
+
+    serviceSelect.innerHTML = "";
+
+    services.forEach(service => {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        `${service.name} - R$ ${Number(service.price).toFixed(2)}`;
+
+      option.innerText =
+        `${service.name} - R$ ${Number(service.price).toFixed(2)}`;
+
+      option.dataset.price =
+        service.price;
+
+      option.dataset.duration =
+        service.duration;
+
+      serviceSelect.appendChild(option);
+
+    });
+
   }
 
   // 🔍 BUSCAR HORÁRIOS OCUPADOS
@@ -342,6 +424,7 @@ Hora: ${horarioSelecionado}`;
   };
 
 });
+
 </script>
 
 </body>
