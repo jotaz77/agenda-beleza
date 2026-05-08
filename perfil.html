@@ -1,177 +1,301 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meu Studio</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Meu Studio</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
 
 <body class="bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 min-h-screen p-4">
 
-<div class="max-w-md mx-auto">
+  <div class="max-w-md mx-auto">
 
-  <!-- CARD -->
-  <div class="bg-white rounded-3xl shadow-xl p-6">
+    <!-- CARD PRINCIPAL -->
+    <div class="bg-white rounded-3xl shadow-xl p-6">
 
-    <img id="preview"
-      src="https://placehold.co/120x120/png"
-      class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-pink-200 shadow"
-    >
+      <img id="preview"
+        src="https://placehold.co/120x120/png"
+        class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-pink-200 shadow"
+      >
 
-    <h1 id="studioTitle"
-      class="text-2xl font-bold text-center mt-4 text-gray-800">
-      Meu Studio
-    </h1>
+      <h1 id="studioTitle"
+        class="text-2xl font-bold text-center mt-4 text-gray-800">
+        Meu Studio
+      </h1>
 
-    <div id="publicLink"
-      class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
-    </div>
-
-    <div class="grid grid-cols-2 gap-3 mt-5">
-
-      <button id="copiar"
-        class="bg-pink-500 text-white p-3 rounded-2xl font-bold">
-        Copiar Link
-      </button>
-
-      <button id="abrirAgenda"
-        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold">
-        Agendamento Manual
-      </button>
-
-      <button onclick="window.location.href='painel.html'"
-        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold">
-        Painel
-      </button>
-
-      <button onclick="window.location.href='servicos.html'"
-        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold">
-        Serviços
-      </button>
-
-      <button id="editar"
-        class="col-span-2 bg-gray-100 text-gray-700 p-3 rounded-2xl font-bold">
-        Editar Perfil
-      </button>
-
-    </div>
-  </div>
-
-  <!-- EDIT -->
-  <div id="editCard" class="bg-white rounded-3xl shadow-xl p-6 mt-5 hidden">
-
-    <h2 class="text-xl font-bold mb-4">Editar Perfil</h2>
-
-    <input id="studio" placeholder="Nome"
-      class="w-full mb-3 p-3 border rounded-2xl">
-
-    <input id="username" placeholder="username"
-      class="w-full mb-3 p-3 border rounded-2xl">
-
-    <input type="file" id="logoFile"
-      class="w-full mb-4">
-
-    <button id="salvar"
-      class="w-full bg-pink-500 text-white p-3 rounded-2xl font-bold">
-      Salvar
-    </button>
-
-    <p id="msg" class="text-center text-sm mt-3"></p>
-
-  </div>
-
-  <!-- CONFIG -->
-  <div class="bg-white rounded-3xl shadow-xl p-6 mt-5">
-
-    <h2 class="text-xl font-bold mb-5">Configuração</h2>
-
-    <div class="grid grid-cols-2 gap-3 mb-6">
-
-      <div>
-        <label>Atendimentos simultâneos</label>
-        <input type="number" id="capacity" min="1" value="1"
-          class="w-full p-3 border rounded-xl">
+      <div id="publicLink"
+        class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
       </div>
 
-      <div>
-        <label>Intervalo</label>
-        <select id="slotInterval"
-          class="w-full p-3 border rounded-xl">
-          <option value="15">15 min</option>
-          <option value="30" selected>30 min</option>
-          <option value="60">1h</option>
-        </select>
+      <div class="grid grid-cols-2 gap-3 mt-5">
+
+        <button id="copiar"
+          class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-2xl font-bold">
+          Copiar Link
+        </button>
+
+        <button id="abrirAgenda"
+          class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
+          Agendamento Manual
+        </button>
+
+        <button onclick="window.location.href='painel.html'"
+          class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
+          Painel
+        </button>
+
+        <button onclick="window.location.href='servicos.html'"
+          class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
+          Serviços
+        </button>
+
+        <button id="editar"
+          class="col-span-2 bg-gray-100 text-gray-700 p-3 rounded-2xl font-bold hover:bg-gray-200">
+          Editar Perfil
+        </button>
+
       </div>
 
     </div>
 
-    <button id="saveSettings"
-      class="w-full bg-purple-500 text-white p-3 rounded-2xl font-bold">
-      Salvar Config
-    </button>
+    <!-- EDIT -->
+    <div id="editCard" class="bg-white rounded-3xl shadow-xl p-6 mt-5 hidden">
+
+      <h2 class="text-xl font-bold mb-4">Editar Perfil ✨</h2>
+
+      <input id="studio" placeholder="Nome do Studio"
+        class="w-full mb-3 p-3 border rounded-2xl">
+
+      <input id="username" placeholder="Seu link"
+        class="w-full mb-3 p-3 border rounded-2xl">
+
+      <input type="file" id="logoFile" class="w-full mb-4" accept="image/*">
+
+      <button id="salvar"
+        class="w-full bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-2xl font-bold">
+        Salvar
+      </button>
+
+      <button id="logout"
+        class="w-full mt-3 bg-gray-100 p-3 rounded-2xl">
+        Sair
+      </button>
+
+      <p id="msg" class="text-center text-sm mt-3"></p>
+
+    </div>
+
+    <!-- DISPONIBILIDADE -->
+    <div class="bg-white rounded-3xl shadow-xl p-6 mt-5">
+
+      <h2 class="text-xl font-bold mb-5">
+        Disponibilidade 📅
+      </h2>
+
+      <!-- CONFIGURAÇÕES GERAIS -->
+      <div class="grid grid-cols-2 gap-3 mb-6">
+
+        <div>
+          <label class="text-sm text-gray-500">
+            Atendimentos simultâneos
+          </label>
+
+          <input type="number" id="capacity" min="1" value="1"
+            class="w-full p-3 border rounded-xl">
+        </div>
+
+        <div>
+          <label class="text-sm text-gray-500">
+            Intervalo dos horários
+          </label>
+
+          <select id="slotInterval"
+            class="w-full p-3 border rounded-xl">
+
+            <option value="15">15 min</option>
+            <option value="30" selected>30 min</option>
+            <option value="60">1 hora</option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+      <button id="saveSettings"
+        class="w-full mb-6 bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-2xl font-bold">
+        Salvar Configurações Gerais
+      </button>
+
+      <div id="availabilityList" class="space-y-4"></div>
+
+    </div>
 
   </div>
-
-</div>
 
 <script>
 
-const supabase = supabase.createClient(
-  "https://bjaurtrqrasznuptthyf.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
-);
-
 document.addEventListener("DOMContentLoaded", async () => {
 
-const { data: { user } } = await supabase.auth.getUser();
+  const supabase = window.supabase.createClient(
+    "https://bjaurtrqrasznuptthyf.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
+  );
 
-if (!user) location.href = "login.html";
+  const { data: { user } } = await supabase.auth.getUser();
 
-const profileRes = await supabase
-  .from("profiles")
-  .select("*")
-  .eq("id", user.id)
-  .maybeSingle();
+  if (!user) window.location.href = "login.html";
 
-const profile = profileRes.data;
+  const studioInput = document.getElementById("studio");
+  const usernameInput = document.getElementById("username");
+  const logoInput = document.getElementById("logoFile");
+  const preview = document.getElementById("preview");
+  const msg = document.getElementById("msg");
+  const studioTitle = document.getElementById("studioTitle");
+  const publicLink = document.getElementById("publicLink");
+  const editCard = document.getElementById("editCard");
+  const availabilityList = document.getElementById("availabilityList");
 
-if (profile) {
+  let logoUrl = "";
 
-  document.getElementById("studio").value = profile.studio_name || "";
-  document.getElementById("username").value = profile.username || "";
-
-  document.getElementById("capacity").value = profile.capacity || 1;
-  document.getElementById("slotInterval").value = profile.slot_interval || 30;
-
-  document.getElementById("studioTitle").innerText =
-    profile.studio_name || "Meu Studio";
-
-}
-
-document.getElementById("saveSettings").onclick = async () => {
-
-  const capacity = Number(document.getElementById("capacity").value);
-  const slot_interval = Number(document.getElementById("slotInterval").value);
-
-  const { error } = await supabase
+  const { data: profile } = await supabase
     .from("profiles")
-    .update({
-      capacity,
-      slot_interval
-    })
-    .eq("id", user.id);
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
-  if (error) {
-    console.log(error);
-    alert("Erro ao salvar config");
-    return;
+  if (profile) {
+
+    studioInput.value = profile.studio_name || "";
+    usernameInput.value = profile.username || "";
+    studioTitle.innerText = profile.studio_name || "Meu Studio";
+
+    if (profile.logo_url) {
+      logoUrl = profile.logo_url;
+      preview.src = logoUrl;
+    }
+
+    const fullLink =
+      `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
+
+    publicLink.innerHTML = `🔗<br><span class="font-bold text-pink-600 break-all">${fullLink}</span>`;
+
+    document.getElementById("copiar").onclick = async () => {
+      await navigator.clipboard.writeText(fullLink);
+      alert("Link copiado!");
+    };
+
+    document.getElementById("abrirAgenda").onclick = () => {
+      window.open(fullLink, "_blank");
+    };
   }
 
-  alert("Salvo com sucesso!");
-};
+  document.getElementById("editar").onclick = () => {
+    editCard.classList.toggle("hidden");
+  };
+
+  // ================= CONFIG =================
+
+  async function carregarConfig() {
+    const { data } = await supabase
+      .from("profiles")
+      .select("capacity, slot_interval")
+      .eq("id", user.id)
+      .single();
+
+    if (data) {
+      document.getElementById("capacity").value = data.capacity || 1;
+      document.getElementById("slotInterval").value = data.slot_interval || 30;
+    }
+  }
+
+  document.getElementById("saveSettings").onclick = async () => {
+
+    const capacity = parseInt(document.getElementById("capacity").value);
+    const slot_interval = parseInt(document.getElementById("slotInterval").value);
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        capacity,
+        slot_interval
+      })
+      .eq("id", user.id);
+
+    if (error) return alert("Erro ao salvar");
+
+    alert("Configurações salvas!");
+  };
+
+  carregarConfig();
+
+  // ================= DISPONIBILIDADE =================
+
+  const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
+
+  async function carregarDisponibilidade() {
+
+    availabilityList.innerHTML = "";
+
+    const { data } = await supabase
+      .from("availability")
+      .select("*")
+      .eq("user_id", user.id);
+
+    for (let i = 0; i < 7; i++) {
+
+      const dia = data.find(d => d.weekday === i);
+
+      const div = document.createElement("div");
+
+      div.className = "border p-4 rounded-2xl";
+
+      div.innerHTML = `
+        <div class="flex justify-between mb-2">
+          <b>${dias[i]}</b>
+          <input type="checkbox" id="active-${i}" ${dia?.active !== false ? "checked" : ""}>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <input type="time" id="start-${i}" value="${dia?.start_time || "09:00"}">
+          <input type="time" id="end-${i}" value="${dia?.end_time || "18:00"}">
+        </div>
+
+        <button onclick="salvar(${i})"
+          class="mt-3 bg-pink-500 text-white w-full p-2 rounded-xl">
+          Salvar
+        </button>
+      `;
+
+      availabilityList.appendChild(div);
+    }
+  }
+
+  window.salvar = async (i) => {
+
+    const start_time = document.getElementById(`start-${i}`).value;
+    const end_time = document.getElementById(`end-${i}`).value;
+    const active = document.getElementById(`active-${i}`).checked;
+
+    await supabase.from("availability").upsert({
+      user_id: user.id,
+      weekday: i,
+      start_time,
+      end_time,
+      active
+    });
+
+    alert("Salvo!");
+  };
+
+  carregarDisponibilidade();
 
 });
 
