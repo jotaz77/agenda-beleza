@@ -7,6 +7,7 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 </head>
 
 <body class="bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 min-h-screen p-4">
@@ -26,7 +27,6 @@
       Meu Studio
     </h1>
 
-    <!-- LINK -->
     <div id="publicLink"
       class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
     </div>
@@ -119,25 +119,18 @@
 
 <script>
 
-const supabase = window.supabase.createClient(
-  "https://bjaurtrqrasznuptthyf.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
-);
-
 document.addEventListener("DOMContentLoaded", async () => {
 
-  const { data: { user } } = await client.auth.getUser();
+  const supabase = window.supabaseClient;
+
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) location.href = "login.html";
 
-  let profileData = null;
-
-  const { data: profile } = await client
+  const { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
-
-  profileData = profile;
 
   if (profile) {
 
@@ -150,7 +143,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("studioTitle").innerText =
       profile.studio_name || "Meu Studio";
 
-    const link = `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
+    const link =
+      `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
 
     document.getElementById("publicLink").innerHTML =
       `🔗<br><b class="text-pink-600 break-all">${link}</b>`;
@@ -165,18 +159,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
-  // EDIT
   document.getElementById("editar").onclick = () => {
     document.getElementById("editCard").classList.toggle("hidden");
   };
 
-  // SALVAR PERFIL
   document.getElementById("salvar").onclick = async () => {
 
     const studio_name = document.getElementById("studio").value;
     const username = document.getElementById("username").value;
 
-    await client.from("profiles").update({
+    await supabase.from("profiles").update({
       studio_name,
       username
     }).eq("id", user.id);
@@ -185,13 +177,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     location.reload();
   };
 
-  // CONFIG
   document.getElementById("saveSettings").onclick = async () => {
 
     const capacity = Number(document.getElementById("capacity").value);
     const slot_interval = Number(document.getElementById("slotInterval").value);
 
-    const { error } = await client
+    const { error } = await supabase
       .from("profiles")
       .update({ capacity, slot_interval })
       .eq("id", user.id);
