@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+
   <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>Meu Studio</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
 
 <body class="bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 min-h-screen p-4">
@@ -39,32 +48,91 @@
       <!-- BOTÕES -->
       <div class="grid grid-cols-2 gap-3 mt-5">
 
+        <!-- COPIAR -->
         <button
           id="copiar"
-          class="bg-pink-500 text-white p-3 rounded-2xl font-bold"
+          class="
+            bg-pink-500
+            hover:bg-pink-600
+            text-white
+            p-3
+            rounded-2xl
+            font-bold
+            transition
+          "
         >
           Copiar Link
         </button>
 
+        <!-- AGENDA -->
         <button
           id="abrirAgenda"
-          class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold"
+          class="
+            bg-white
+            border
+            border-pink-300
+            text-pink-600
+            p-3
+            rounded-2xl
+            font-bold
+            hover:bg-pink-50
+            transition
+          "
         >
-          Abrir Agenda
+          Agendamento Manual
         </button>
 
+        <!-- PAINEL -->
         <button
           onclick="window.location.href='painel.html'"
-          class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold"
+          class="
+            bg-white
+            border
+            border-pink-300
+            text-pink-600
+            p-3
+            rounded-2xl
+            font-bold
+            hover:bg-pink-50
+            transition
+          "
         >
           Painel
         </button>
 
+        <!-- SERVIÇOS -->
+        <button
+          onclick="window.location.href='servicos.html'"
+          class="
+            bg-white
+            border
+            border-pink-300
+            text-pink-600
+            p-3
+            rounded-2xl
+            font-bold
+            hover:bg-pink-50
+            transition
+          "
+        >
+          Serviços
+        </button>
+
+        <!-- EDITAR -->
         <button
           id="editar"
-          class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold"
+          class="
+            col-span-2
+            bg-gray-100
+            text-gray-700
+            p-3
+            rounded-2xl
+            font-bold
+            hover:bg-gray-200
+            transition
+          "
         >
-          Editar
+          Editar Perfil
         </button>
 
       </div>
@@ -81,18 +149,21 @@
         Editar Perfil ✨
       </h2>
 
+      <!-- NOME -->
       <input
         id="studio"
         placeholder="Nome do Studio"
         class="w-full mb-3 p-3 border rounded-2xl"
       >
 
+      <!-- USERNAME -->
       <input
         id="username"
         placeholder="Seu link (ex: sophia)"
         class="w-full mb-3 p-3 border rounded-2xl"
       >
 
+      <!-- LOGO -->
       <input
         type="file"
         id="logoFile"
@@ -100,20 +171,40 @@
         accept="image/*"
       >
 
+      <!-- SALVAR -->
       <button
         id="salvar"
-        class="w-full bg-pink-500 text-white p-3 rounded-2xl font-bold"
+        class="
+          w-full
+          bg-pink-500
+          hover:bg-pink-600
+          text-white
+          p-3
+          rounded-2xl
+          font-bold
+          transition
+        "
       >
         Salvar Alterações
       </button>
 
+      <!-- LOGOUT -->
       <button
         id="logout"
-        class="w-full mt-3 bg-gray-100 p-3 rounded-2xl"
+        class="
+          w-full
+          mt-3
+          bg-gray-100
+          hover:bg-gray-200
+          p-3
+          rounded-2xl
+          transition
+        "
       >
         Sair da conta
       </button>
 
+      <!-- MSG -->
       <p
         id="msg"
         class="text-center text-sm mt-3"
@@ -124,6 +215,7 @@
   </div>
 
 <script>
+
 document.addEventListener("DOMContentLoaded", async () => {
 
   // 🔗 SUPABASE
@@ -138,7 +230,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   } = await supabase.auth.getUser();
 
   if (!user) {
+
     window.location.href = "login.html";
+
     return;
   }
 
@@ -215,6 +309,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       await navigator.clipboard.writeText(fullLink);
 
       alert("Link copiado!");
+
     });
 
     // 🌍 ABRIR
@@ -295,7 +390,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       usernameInput.value
         .trim()
         .toLowerCase()
-        .replace(/\\s+/g, "");
+        .replace(/[^a-z0-9]/g, "");
 
     // 💾 SALVAR
     const { error } =
@@ -322,7 +417,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       "Perfil atualizado!";
 
     setTimeout(() => {
+
       location.reload();
+
     }, 1000);
 
   });
@@ -339,6 +436,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
 });
+
 </script>
 
 </body>
