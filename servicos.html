@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Serviços
+  </title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body class="bg-gradient-to-br from-pink-100 to-pink-200 min-h-screen p-6">
+
+  <div class="max-w-3xl mx-auto">
+
+    <!-- TOPO -->
+    <div class="flex items-center justify-between mb-6">
+
+      <h1 class="text-3xl font-bold text-gray-800">
+        Meus Serviços 💅
+      </h1>
+
+      <a
+        href="painel.html"
+        class="bg-white px-4 py-2 rounded-2xl shadow"
+      >
+        Painel
+      </a>
+
+    </div>
+
+    <!-- FORM -->
+    <div class="bg-white p-6 rounded-3xl shadow-xl mb-6">
+
+      <h2 class="text-xl font-bold mb-4">
+        Novo Serviço
+      </h2>
+
+      <div class="grid md:grid-cols-3 gap-3">
+
+        <input
+          id="name"
+          placeholder="Nome"
+          class="p-3 border rounded-2xl"
+        >
+
+        <input
+          id="price"
+          type="number"
+          placeholder="Preço"
+          class="p-3 border rounded-2xl"
+        >
+
+        <input
+          id="duration"
+          type="number"
+          placeholder="Duração (min)"
+          class="p-3 border rounded-2xl"
+        >
+
+      </div>
+
+      <button
+        id="salvar"
+        class="
+          mt-4
+          w-full
+          bg-pink-500
+          hover:bg-pink-600
+          text-white
+          p-3
+          rounded-2xl
+          font-bold
+          transition
+        "
+      >
+        Salvar serviço
+      </button>
+
+    </div>
+
+    <!-- LISTA -->
+    <div
+      id="lista"
+      class="space-y-4"
+    ></div>
+
+  </div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  // 🔗 SUPABASE
+  const supabase =
+    window.supabase.createClient(
+      "https://bjaurtrqrasznuptthyf.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
+    );
+
+  // 🔐 USER
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+
+    window.location.href =
+      "login.html";
+
+    return;
+  }
+
+  // 📦 ELEMENTOS
+  const lista =
+    document.getElementById("lista");
+
+  const btnSalvar =
+    document.getElementById("salvar");
+
+  // 📥 CARREGAR
+  async function carregarServicos() {
+
+    lista.innerHTML = `
+      <div class="text-center text-gray-500">
+        Carregando...
+      </div>
+    `;
+
+    const {
+      data,
+      error
+    } = await supabase
+      .from("services")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", {
+        ascending: false
+      });
+
+    if (error) {
+
+      console.log(error);
+
+      lista.innerHTML = `
+        <div class="text-red-500">
+          Erro ao carregar
+        </div>
+      `;
+
+      return;
+    }
+
+    if (!data || data.length === 0) {
+
+      lista.innerHTML = `
+        <div class="bg-white p-8 rounded-3xl text-center shadow">
+          <p class="text-gray-400">
+            Nenhum serviço cadastrado
+          </p>
+        </div>
+      `;
+
+      return;
+    }
+
+    lista.innerHTML = "";
+
+    data.forEach(servico => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = `
+        bg-white
+        p-5
+        rounded-3xl
+        shadow-md
+        flex
+        justify-between
+        items-center
+      `;
+
+      div.innerHTML = `
+
+        <div>
+
+          <h2 class="font-bold text-lg">
+            ${servico.name}
+          </h2>
+
+          <p class="text-gray-600 mt-1">
+            💰 R$${Number(servico.price).toFixed(2)}
+          </p>
+
+          <p class="text-gray-500 text-sm">
+            ⏰ ${servico.duration} min
+          </p>
+
+        </div>
+
+        <div class="flex gap-2">
+
+          <button
+            onclick="toggleServico(${servico.id}, ${servico.active})"
+            class="
+              px-4
+              py-2
+              rounded-2xl
+              text-white
+              font-semibold
+              ${servico.active ? 'bg-yellow-500' : 'bg-green-500'}
+            "
+          >
+            ${servico.active ? 'Desativar' : 'Ativar'}
+          </button>
+
+          <button
+            onclick="deletarServico(${servico.id})"
+            class="
+              px-4
+              py-2
+              rounded-2xl
+              bg-red-500
+              text-white
+              font-semibold
+            "
+          >
+            Excluir
+          </button>
+
+        </div>
+
+      `;
+
+      lista.appendChild(div);
+
+    });
+
+  }
+
+  // 💾 SALVAR
+  btnSalvar.addEventListener("click", async () => {
+
+    const name =
+      document.getElementById("name").value;
+
+    const price =
+      document.getElementById("price").value;
+
+    const duration =
+      document.getElementById("duration").value;
+
+    if (!name || !price || !duration) {
+
+      alert("Preencha tudo");
+
+      return;
+    }
+
+    const { error } =
+      await supabase
+        .from("services")
+        .insert([
+          {
+            user_id: user.id,
+            name,
+            price,
+            duration
+          }
+        ]);
+
+    if (error) {
+
+      console.log(error);
+
+      alert("Erro ao salvar");
+
+      return;
+    }
+
+    // LIMPAR
+    document.getElementById("name").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("duration").value = "";
+
+    carregarServicos();
+
+  });
+
+  // 🔄 ATIVAR/DESATIVAR
+  window.toggleServico = async function (id, ativo) {
+
+    await supabase
+      .from("services")
+      .update({
+        active: !ativo
+      })
+      .eq("id", id)
+      .eq("user_id", user.id);
+
+    carregarServicos();
+
+  };
+
+  // ❌ EXCLUIR
+  window.deletarServico = async function (id) {
+
+    const confirmar =
+      confirm("Excluir serviço?");
+
+    if (!confirmar) return;
+
+    await supabase
+      .from("services")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", user.id);
+
+    carregarServicos();
+
+  };
+
+  // 🚀 START
+  carregarServicos();
+
+});
+
+</script>
+
+</body>
+</html>
