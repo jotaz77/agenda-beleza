@@ -1,28 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Studio</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+</head>
+
+<body class="bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 min-h-screen p-4">
+
+<div class="max-w-md mx-auto">
+
+  <!-- CARD -->
+  <div class="bg-white rounded-3xl shadow-xl p-6">
+
+    <img id="preview"
+      src="https://placehold.co/120x120/png"
+      class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-pink-200 shadow"
+    >
+
+    <h1 id="studioTitle"
+      class="text-2xl font-bold text-center mt-4 text-gray-800">
+      Meu Studio
+    </h1>
+
+    <div id="publicLink"
+      class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mt-5">
+
+      <button id="copiar"
+        class="bg-pink-500 text-white p-3 rounded-2xl font-bold">
+        Copiar Link
+      </button>
+
+      <button id="abrirAgenda"
+        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold">
+        Agendamento Manual
+      </button>
+
+      <button onclick="window.location.href='painel.html'"
+        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold">
+        Painel
+      </button>
+
+      <button onclick="window.location.href='servicos.html'"
+        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold">
+        Serviços
+      </button>
+
+      <button id="editar"
+        class="col-span-2 bg-gray-100 text-gray-700 p-3 rounded-2xl font-bold">
+        Editar Perfil
+      </button>
+
+    </div>
+  </div>
+
+  <!-- EDIT -->
+  <div id="editCard" class="bg-white rounded-3xl shadow-xl p-6 mt-5 hidden">
+
+    <h2 class="text-xl font-bold mb-4">Editar Perfil</h2>
+
+    <input id="studio" placeholder="Nome"
+      class="w-full mb-3 p-3 border rounded-2xl">
+
+    <input id="username" placeholder="username"
+      class="w-full mb-3 p-3 border rounded-2xl">
+
+    <input type="file" id="logoFile"
+      class="w-full mb-4">
+
+    <button id="salvar"
+      class="w-full bg-pink-500 text-white p-3 rounded-2xl font-bold">
+      Salvar
+    </button>
+
+    <p id="msg" class="text-center text-sm mt-3"></p>
+
+  </div>
+
+  <!-- CONFIG -->
+  <div class="bg-white rounded-3xl shadow-xl p-6 mt-5">
+
+    <h2 class="text-xl font-bold mb-5">Configuração</h2>
+
+    <div class="grid grid-cols-2 gap-3 mb-6">
+
+      <div>
+        <label>Atendimentos simultâneos</label>
+        <input type="number" id="capacity" min="1" value="1"
+          class="w-full p-3 border rounded-xl">
+      </div>
+
+      <div>
+        <label>Intervalo</label>
+        <select id="slotInterval"
+          class="w-full p-3 border rounded-xl">
+          <option value="15">15 min</option>
+          <option value="30" selected>30 min</option>
+          <option value="60">1h</option>
+        </select>
+      </div>
+
+    </div>
+
+    <button id="saveSettings"
+      class="w-full bg-purple-500 text-white p-3 rounded-2xl font-bold">
+      Salvar Config
+    </button>
+
+  </div>
+
+</div>
 
 <script>
-const supabase = window.supabaseClient;
+
+const supabase = supabase.createClient(
+  "https://bjaurtrqrasznuptthyf.supabase.co",
+  "SUA_KEY"
+);
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-  const { data: { user } } = await supabase.auth.getUser();
+const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
+if (!user) location.href = "login.html";
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+const profileRes = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("id", user.id)
+  .maybeSingle();
 
-  if (!profile) return;
+const profile = profileRes.data;
 
-  document.getElementById("studioTitle").innerText =
-    profile.studio_name || "Studio";
+if (profile) {
 
   document.getElementById("studio").value = profile.studio_name || "";
   document.getElementById("username").value = profile.username || "";
@@ -30,33 +146,36 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("capacity").value = profile.capacity || 1;
   document.getElementById("slotInterval").value = profile.slot_interval || 30;
 
-  // LINK
-  const link = `${location.origin}/agendamento.html?studio=${profile.username}`;
+  document.getElementById("studioTitle").innerText =
+    profile.studio_name || "Meu Studio";
 
-  document.getElementById("publicLink").innerText = link;
+}
 
-  document.getElementById("copiar").onclick = () => {
-    navigator.clipboard.writeText(link);
-    alert("Link copiado!");
-  };
+document.getElementById("saveSettings").onclick = async () => {
 
-  document.getElementById("abrirAgenda").onclick = () => {
-    window.open(link);
-  };
+  const capacity = Number(document.getElementById("capacity").value);
+  const slot_interval = Number(document.getElementById("slotInterval").value);
 
-  // salvar perfil
-  document.getElementById("salvar").onclick = async () => {
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      capacity,
+      slot_interval
+    })
+    .eq("id", user.id);
 
-    await supabase.from("profiles")
-      .update({
-        studio_name: document.getElementById("studio").value,
-        username: document.getElementById("username").value
-      })
-      .eq("id", user.id);
+  if (error) {
+    console.log(error);
+    alert("Erro ao salvar config");
+    return;
+  }
 
-    alert("Salvo!");
-    location.reload();
-  };
+  alert("Salvo com sucesso!");
+};
 
 });
+
 </script>
+
+</body>
+</html>
