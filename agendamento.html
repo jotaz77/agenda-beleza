@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agendamento</title>
+<title>Agendamento PRO</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,39 +13,28 @@
 
 <div class="bg-white rounded-3xl shadow-xl p-6 w-full max-w-md">
 
-  <!-- TOPO -->
   <div class="text-center mb-6">
     <img id="logo"
       src="https://placehold.co/100x100/png"
       class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-pink-200 mb-3"
     >
-
-    <h1 id="studioName" class="text-2xl font-bold text-gray-800">
-      Studio
-    </h1>
+    <h1 id="studioName" class="text-2xl font-bold text-gray-800">Studio</h1>
   </div>
 
-  <!-- SERVIÇO -->
   <label class="font-semibold">Serviço</label>
-  <select id="service" class="w-full p-3 border rounded-xl mb-4">
-    <option>Carregando serviços...</option>
-  </select>
+  <select id="service" class="w-full p-3 border rounded-xl mb-4"></select>
 
-  <!-- DATA -->
   <label class="font-semibold">Data</label>
   <input type="date" id="date" class="w-full p-3 border rounded-xl mb-4">
 
-  <!-- HORÁRIOS -->
   <label class="font-semibold">Horário</label>
   <div id="times" class="grid grid-cols-3 gap-2 mb-4"></div>
 
-  <!-- INPUTS -->
   <input id="name" placeholder="Seu nome" class="w-full p-3 border rounded-xl mb-3">
   <input id="phone" placeholder="WhatsApp" class="w-full p-3 border rounded-xl mb-4">
 
-  <!-- BOTÃO -->
   <button onclick="agendar()"
-    class="w-full bg-pink-500 hover:bg-pink-600 transition text-white p-3 rounded-xl font-bold">
+    class="w-full bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-xl font-bold">
     Confirmar agendamento
   </button>
 
@@ -59,135 +48,136 @@ document.addEventListener("DOMContentLoaded", async () => {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
   );
 
-  let horariosBase = [];
   const timesDiv = document.getElementById("times");
-  let horarioSelecionado = null;
-  let ownerId = null;
 
-  // 🔍 PEGAR STUDIO
+  let ownerId = null;
+  let selectedTime = null;
+
   const params = new URLSearchParams(window.location.search);
   const username = params.get("studio");
 
-  if (!username) {
-    alert("Studio não encontrado");
-    return;
-  }
+  if (!username) return alert("Studio não encontrado");
 
-  // 🔍 PERFIL
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("username", username)
     .single();
 
-  if (profileError || !profile) {
-    console.log(profileError);
-    alert("Studio não encontrado");
-    return;
-  }
+  if (!profile) return alert("Studio não encontrado");
 
   ownerId = profile.id;
 
-  // ⏰ HORÁRIOS
-  const { data: horarios } = await supabase
-    .from("availability")
-    .select("*")
-    .eq("user_id", ownerId)
-    .order("time", { ascending: true });
-
-  horariosBase = (horarios || []).map(h => h.time);
-
-  // 🎨 PERFIL
   document.getElementById("studioName").innerText = profile.studio_name;
+  if (profile.logo_url) document.getElementById("logo").src = profile.logo_url;
 
-  if (profile.logo_url) {
-    document.getElementById("logo").src = profile.logo_url;
-  }
-
-  // 💅 SERVIÇOS
+  // ================= SERVIÇOS =================
   const serviceSelect = document.getElementById("service");
 
-  const { data: services, error: servicesError } = await supabase
+  const { data: services } = await supabase
     .from("services")
     .select("*")
-    .eq("user_id", profile.id)
-    .eq("active", true)
-    .order("created_at", { ascending: true });
+    .eq("user_id", ownerId)
+    .eq("active", true);
 
-  if (servicesError) {
-    console.log(servicesError);
-    serviceSelect.innerHTML = `<option>Erro ao carregar serviços</option>`;
-  } else if (!services || services.length === 0) {
-    serviceSelect.innerHTML = `<option>Nenhum serviço disponível</option>`;
-  } else {
-    serviceSelect.innerHTML = "";
+  serviceSelect.innerHTML = "";
 
-    services.forEach(service => {
-      const option = document.createElement("option");
+  services.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = `${s.name} - R$ ${s.price}`;
+    opt.innerText = `${s.name} - R$ ${s.price}`;
+    serviceSelect.appendChild(opt);
+  });
 
-      option.value = `${service.name} - R$ ${Number(service.price).toFixed(2)}`;
-      option.innerText = `${service.name} - R$ ${Number(service.price).toFixed(2)}`;
-      option.dataset.price = service.price;
-      option.dataset.duration = service.duration;
+  // ================= DISPONIBILIDADE =================
 
-      serviceSelect.appendChild(option);
-    });
+  function toMinutes(t) {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
   }
 
-  // 📅 OCUPADOS
-  async function buscarHorariosOcupados(dataSelecionada) {
+  function toTime(min) {
+    const h = String(Math.floor(min / 60)).padStart(2, "0");
+    const m = String(min % 60).padStart(2, "0");
+    return `${h}:${m}`;
+  }
 
-    const { data, error } = await supabase
-      .from("appointments")
-      .select("time")
-      .eq("date", dataSelecionada)
-      .eq("user_id", ownerId);
+  function gerarHorarios(start, end, interval) {
+    const slots = [];
+    let s = toMinutes(start);
+    const e = toMinutes(end);
 
-    if (error) {
-      console.log(error);
-      return [];
+    while (s < e) {
+      slots.push(toTime(s));
+      s += interval;
     }
 
-    return data.map(i => i.time);
+    return slots;
   }
 
-  // 🎯 HORÁRIOS
   async function renderHorarios() {
 
     const date = document.getElementById("date").value;
+    if (!date) return;
+
+    const weekday = new Date(date).getDay();
+
+    const { data: avail } = await supabase
+      .from("availability")
+      .select("*")
+      .eq("user_id", ownerId)
+      .eq("weekday", weekday)
+      .single();
+
+    if (!avail || avail.active === false) {
+      timesDiv.innerHTML = "<p class='text-red-400'>Fechado neste dia</p>";
+      return;
+    }
+
+    const interval = profile.slot_interval || 30;
+
+    const slots = gerarHorarios(
+      avail.start_time,
+      avail.end_time,
+      interval
+    );
+
+    const { data: appointments } = await supabase
+      .from("appointments")
+      .select("time")
+      .eq("date", date)
+      .eq("user_id", ownerId);
+
+    const countMap = {};
+
+    appointments.forEach(a => {
+      countMap[a.time] = (countMap[a.time] || 0) + 1;
+    });
+
+    const capacity = profile.capacity || 1;
 
     timesDiv.innerHTML = "";
 
-    if (!date) {
-      timesDiv.innerHTML = "<p class='text-gray-400'>Escolha uma data</p>";
-      return;
-    }
+    slots.forEach(time => {
 
-    if (horariosBase.length === 0) {
-      timesDiv.innerHTML = "<p class='text-red-400'>Studio sem horários disponíveis</p>";
-      return;
-    }
-
-    const ocupados = await buscarHorariosOcupados(date);
-
-    horariosBase.forEach(h => {
+      const ocupacao = countMap[time] || 0;
 
       const btn = document.createElement("button");
-      btn.innerText = h;
+      btn.innerText = time;
 
-      if (ocupados.includes(h)) {
+      if (ocupacao >= capacity) {
         btn.className = "bg-gray-300 p-2 rounded-xl opacity-50";
         btn.disabled = true;
       } else {
-        btn.className = "bg-pink-100 hover:bg-pink-200 transition p-2 rounded-xl";
+        btn.className = "bg-pink-100 hover:bg-pink-200 p-2 rounded-xl";
 
         btn.onclick = () => {
-          horarioSelecionado = h;
+          selectedTime = time;
 
           document.querySelectorAll("#times button")
-            .forEach(b => b.classList.remove("bg-pink-500", "text-white"));
+            .forEach(b => b.classList.remove("bg-pink-500","text-white"));
 
-          btn.classList.add("bg-pink-500", "text-white");
+          btn.classList.add("bg-pink-500","text-white");
         };
       }
 
@@ -196,11 +186,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   document.getElementById("date").addEventListener("change", () => {
-    horarioSelecionado = null;
+    selectedTime = null;
     renderHorarios();
   });
 
-  // 🚀 AGENDAR
+  // ================= AGENDAR =================
   window.agendar = async function () {
 
     const name = document.getElementById("name").value;
@@ -208,9 +198,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const date = document.getElementById("date").value;
     const service = document.getElementById("service").value;
 
-    if (!name || !phone || !date || !horarioSelecionado) {
-      alert("Preencha tudo!");
-      return;
+    if (!name || !phone || !date || !selectedTime) {
+      return alert("Preencha tudo!");
     }
 
     const { error } = await supabase
@@ -221,31 +210,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         phone,
         service,
         date,
-        time: horarioSelecionado,
+        time: selectedTime,
         status: "booked"
       }]);
 
     if (error) {
       console.log(error);
-      alert("Erro ao salvar");
-      return;
+      return alert("Erro ao agendar");
     }
 
-    const msg = `Novo agendamento 💅
-Nome: ${name}
-Serviço: ${service}
-Data: ${date}
-Hora: ${horarioSelecionado}`;
+    alert("Agendado com sucesso!");
 
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-    window.open(url, "_blank");
-
-    alert("Agendamento realizado!");
-
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
-    horarioSelecionado = null;
-
+    selectedTime = null;
     renderHorarios();
   };
 
