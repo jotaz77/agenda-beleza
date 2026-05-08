@@ -2,203 +2,93 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meu Studio</title>
+<title>Login</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
-<body class="bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 min-h-screen p-4">
+<body class="bg-pink-100 flex items-center justify-center h-screen">
 
-<div class="max-w-md mx-auto">
+<div class="bg-white p-6 rounded-xl shadow w-80">
 
-  <!-- CARD PRINCIPAL -->
-  <div class="bg-white rounded-3xl shadow-xl p-6">
+  <h2 class="text-xl mb-4 text-center">Login 💅</h2>
 
-    <img id="preview"
-      src="https://placehold.co/120x120/png"
-      class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-pink-200 shadow"
-    >
+  <input id="email" type="email" placeholder="Email"
+    class="w-full mb-2 p-2 border rounded">
 
-    <h1 id="studioTitle"
-      class="text-2xl font-bold text-center mt-4 text-gray-800">
-      Meu Studio
-    </h1>
+  <input id="password" type="password" placeholder="Senha"
+    class="w-full mb-4 p-2 border rounded">
 
-    <div id="publicLink"
-      class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
-    </div>
+  <button id="btnLogin"
+    class="w-full bg-pink-500 text-white p-2 rounded mb-2">
+    Entrar
+  </button>
 
-    <div class="grid grid-cols-2 gap-3 mt-5">
+  <button id="btnSignup"
+    class="w-full border p-2 rounded">
+    Criar conta
+  </button>
 
-      <button id="copiar"
-        class="bg-pink-500 text-white p-3 rounded-2xl font-bold">
-        Copiar Link
-      </button>
-
-      <button id="abrirAgenda"
-        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold">
-        Agendamento Manual
-      </button>
-
-      <button onclick="window.location.href='painel.html'"
-        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold">
-        Painel
-      </button>
-
-      <button onclick="window.location.href='servicos.html'"
-        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold">
-        Serviços
-      </button>
-
-      <button id="editar"
-        class="col-span-2 bg-gray-100 text-gray-700 p-3 rounded-2xl font-bold">
-        Editar Perfil
-      </button>
-
-    </div>
-  </div>
-
-  <!-- EDIT -->
-  <div id="editCard" class="bg-white rounded-3xl shadow-xl p-6 mt-5 hidden">
-
-    <h2 class="text-xl font-bold mb-4">Editar Perfil</h2>
-
-    <input id="studio" placeholder="Nome"
-      class="w-full mb-3 p-3 border rounded-2xl">
-
-    <input id="username" placeholder="username"
-      class="w-full mb-3 p-3 border rounded-2xl">
-
-    <input type="file" id="logoFile" class="w-full mb-4">
-
-    <button id="salvar"
-      class="w-full bg-pink-500 text-white p-3 rounded-2xl font-bold">
-      Salvar
-    </button>
-
-    <p id="msg" class="text-center text-sm mt-3"></p>
-
-  </div>
-
-  <!-- CONFIG -->
-  <div class="bg-white rounded-3xl shadow-xl p-6 mt-5">
-
-    <h2 class="text-xl font-bold mb-5">Configuração</h2>
-
-    <div class="grid grid-cols-2 gap-3 mb-6">
-
-      <div>
-        <label>Atendimentos simultâneos</label>
-        <input type="number" id="capacity" min="1"
-          class="w-full p-3 border rounded-xl">
-      </div>
-
-      <div>
-        <label>Intervalo</label>
-        <select id="slotInterval"
-          class="w-full p-3 border rounded-xl">
-          <option value="15">15 min</option>
-          <option value="30">30 min</option>
-          <option value="60">1h</option>
-        </select>
-      </div>
-
-    </div>
-
-    <button id="saveSettings"
-      class="w-full bg-purple-500 text-white p-3 rounded-2xl font-bold">
-      Salvar Config
-    </button>
-
-  </div>
+  <p id="msg" class="text-center text-sm mt-2 text-red-500"></p>
 
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-  // ✅ ÚNICA INSTÂNCIA DO SUPABASE (CORRETO)
+  // 🔗 UMA ÚNICA VEZ
   const supabase = window.supabase.createClient(
     "https://bjaurtrqrasznuptthyf.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const msg = document.getElementById("msg");
 
-  if (!user) {
-    location.href = "login.html";
-    return;
-  }
+  document.getElementById("btnLogin").addEventListener("click", async () => {
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-  if (profile) {
+    msg.innerText = "Entrando...";
 
-    document.getElementById("studio").value = profile.studio_name || "";
-    document.getElementById("username").value = profile.username || "";
-    document.getElementById("capacity").value = profile.capacity || 1;
-    document.getElementById("slotInterval").value = profile.slot_interval || 30;
-
-    document.getElementById("studioTitle").innerText =
-      profile.studio_name || "Meu Studio";
-
-    const link =
-      `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
-
-    document.getElementById("publicLink").innerHTML =
-      `🔗<br><b class="text-pink-600 break-all">${link}</b>`;
-
-    document.getElementById("copiar").onclick = async () => {
-      await navigator.clipboard.writeText(link);
-      alert("Link copiado!");
-    };
-
-    document.getElementById("abrirAgenda").onclick = () => {
-      window.open(link, "_blank");
-    };
-  }
-
-  document.getElementById("editar").onclick = () => {
-    document.getElementById("editCard").classList.toggle("hidden");
-  };
-
-  document.getElementById("salvar").onclick = async () => {
-
-    const studio_name = document.getElementById("studio").value;
-    const username = document.getElementById("username").value;
-
-    await supabase.from("profiles").update({
-      studio_name,
-      username
-    }).eq("id", user.id);
-
-    alert("Salvo!");
-    location.reload();
-  };
-
-  document.getElementById("saveSettings").onclick = async () => {
-
-    const capacity = Number(document.getElementById("capacity").value);
-    const slot_interval = Number(document.getElementById("slotInterval").value);
-
-    const { error } = await supabase
-      .from("profiles")
-      .update({ capacity, slot_interval })
-      .eq("id", user.id);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
 
     if (error) {
-      console.log(error);
-      return alert("Erro ao salvar config");
+      msg.innerText = error.message;
+      return;
     }
 
-    alert("Config salva!");
-  };
+    window.location.href = "perfil.html";
+  });
+
+  document.getElementById("btnSignup").addEventListener("click", async () => {
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (password.length < 6) {
+      msg.innerText = "Senha mínima 6 caracteres";
+      return;
+    }
+
+    msg.innerText = "Criando conta...";
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password
+    });
+
+    if (error) {
+      msg.innerText = error.message;
+      return;
+    }
+
+    msg.innerText = "Conta criada! Agora clique em entrar.";
+  });
 
 });
 </script>
