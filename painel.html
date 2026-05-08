@@ -9,7 +9,9 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Meu Studio</title>
+  <title>
+    Painel
+  </title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -17,427 +19,167 @@
 
 </head>
 
-<body class="bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 min-h-screen p-4">
+<body class="min-h-screen bg-gradient-to-br from-pink-100 via-pink-200 to-purple-200 p-6">
 
-  <div class="max-w-md mx-auto">
+  <div class="max-w-4xl mx-auto">
 
-    <!-- CARD PRINCIPAL -->
-    <div class="bg-white rounded-3xl shadow-xl p-6">
+    <!-- HEADER -->
+    <div class="bg-white rounded-3xl shadow-xl p-6 mb-6">
 
-      <!-- LOGO -->
-      <img
-        id="preview"
-        src="https://placehold.co/120x120/png"
-        class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-pink-200 shadow"
-      >
+      <!-- TOPO -->
+      <div class="flex flex-col md:flex-row items-center justify-between gap-5">
 
-      <!-- NOME -->
-      <h1
-        id="studioTitle"
-        class="text-2xl font-bold text-center mt-4 text-gray-800"
-      >
-        Meu Studio
-      </h1>
+        <!-- PERFIL -->
+        <div class="flex items-center gap-4">
 
-      <!-- LINK -->
-      <div
-        id="publicLink"
-        class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm"
-      ></div>
+          <img
+            id="logo"
+            src="https://placehold.co/100x100/png"
+            class="
+              w-24
+              h-24
+              rounded-full
+              object-cover
+              border-4
+              border-pink-200
+              shadow
+            "
+          >
 
-      <!-- BOTÕES -->
-      <div class="grid grid-cols-2 gap-3 mt-5">
+          <div>
 
-        <!-- COPIAR -->
-        <button
-          id="copiar"
-          class="
-            bg-pink-500
-            hover:bg-pink-600
-            text-white
-            p-3
-            rounded-2xl
-            font-bold
-            transition
-          "
-        >
-          Copiar Link
-        </button>
+            <h1
+              id="studioName"
+              class="text-3xl font-bold text-gray-800"
+            >
+              Meu Studio
+            </h1>
 
-        <!-- AGENDA -->
-        <button
-          id="abrirAgenda"
-          class="
-            bg-white
-            border
-            border-pink-300
-            text-pink-600
-            p-3
-            rounded-2xl
-            font-bold
-            hover:bg-pink-50
-            transition
-          "
-        >
-          Agendamento Manual
-        </button>
+            <p class="text-gray-500 mt-1">
+              Painel profissional ✨
+            </p>
 
-        <!-- PAINEL -->
-        <button
-          onclick="window.location.href='painel.html'"
-          class="
-            bg-white
-            border
-            border-pink-300
-            text-pink-600
-            p-3
-            rounded-2xl
-            font-bold
-            hover:bg-pink-50
-            transition
-          "
-        >
-          Painel
-        </button>
+          </div>
 
-        <!-- SERVIÇOS -->
-        <button
-          onclick="window.location.href='servicos.html'"
-          class="
-            bg-white
-            border
-            border-pink-300
-            text-pink-600
-            p-3
-            rounded-2xl
-            font-bold
-            hover:bg-pink-50
-            transition
-          "
-        >
-          Serviços
-        </button>
+        </div>
 
-        <!-- EDITAR -->
-        <button
-          id="editar"
-          class="
-            col-span-2
-            bg-gray-100
-            text-gray-700
-            p-3
-            rounded-2xl
-            font-bold
-            hover:bg-gray-200
-            transition
-          "
-        >
-          Editar Perfil
-        </button>
+        <!-- AÇÕES -->
+        <div class="grid grid-cols-2 gap-3 w-full md:w-auto">
+
+          <!-- PERFIL -->
+          <button
+            onclick="window.location.href='perfil.html'"
+            class="
+              bg-white
+              border
+              border-pink-300
+              text-pink-600
+              px-4
+              py-3
+              rounded-2xl
+              font-bold
+              hover:bg-pink-50
+              transition
+              shadow
+            "
+          >
+            Perfil
+          </button>
+
+          <!-- SERVIÇOS -->
+          <button
+            onclick="window.location.href='servicos.html'"
+            class="
+              bg-white
+              border
+              border-pink-300
+              text-pink-600
+              px-4
+              py-3
+              rounded-2xl
+              font-bold
+              hover:bg-pink-50
+              transition
+              shadow
+            "
+          >
+            Serviços
+          </button>
+
+        </div>
 
       </div>
 
     </div>
 
-    <!-- CARD EDITAR -->
-    <div
-      id="editCard"
-      class="bg-white rounded-3xl shadow-xl p-6 mt-5 hidden"
-    >
+    <!-- FILTROS -->
+    <div class="flex flex-wrap justify-center gap-3 mb-6">
 
-      <h2 class="text-xl font-bold mb-4">
-        Editar Perfil ✨
-      </h2>
-
-      <!-- NOME -->
-      <input
-        id="studio"
-        placeholder="Nome do Studio"
-        class="w-full mb-3 p-3 border rounded-2xl"
-      >
-
-      <!-- USERNAME -->
-      <input
-        id="username"
-        placeholder="Seu link (ex: sophia)"
-        class="w-full mb-3 p-3 border rounded-2xl"
-      >
-
-      <!-- LOGO -->
-      <input
-        type="file"
-        id="logoFile"
-        class="w-full mb-4"
-        accept="image/*"
-      >
-
-      <!-- SALVAR -->
+      <!-- AGENDADOS -->
       <button
-        id="salvar"
+        onclick="filtrar('booked')"
+        id="btn-booked"
         class="
-          w-full
-          bg-pink-500
-          hover:bg-pink-600
-          text-white
-          p-3
+          px-5
+          py-3
           rounded-2xl
-          font-bold
+          bg-white
+          text-gray-700
+          shadow
+          font-semibold
           transition
         "
       >
-        Salvar Alterações
+        Agendados
       </button>
 
-      <!-- LOGOUT -->
+      <!-- CONCLUÍDOS -->
       <button
-        id="logout"
+        onclick="filtrar('done')"
+        id="btn-done"
         class="
-          w-full
-          mt-3
-          bg-gray-100
-          hover:bg-gray-200
-          p-3
+          px-5
+          py-3
           rounded-2xl
+          bg-white
+          text-gray-700
+          shadow
+          font-semibold
           transition
         "
       >
-        Sair da conta
+        Concluídos
       </button>
 
-      <!-- MSG -->
-      <p
-        id="msg"
-        class="text-center text-sm mt-3"
-      ></p>
+      <!-- CANCELADOS -->
+      <button
+        onclick="filtrar('cancelled')"
+        id="btn-cancelled"
+        class="
+          px-5
+          py-3
+          rounded-2xl
+          bg-white
+          text-gray-700
+          shadow
+          font-semibold
+          transition
+        "
+      >
+        Cancelados
+      </button>
 
     </div>
 
+    <!-- LISTA -->
+    <div
+      id="lista"
+      class="space-y-4"
+    ></div>
+
   </div>
 
-<script>
-
-document.addEventListener("DOMContentLoaded", async () => {
-
-  // 🔗 SUPABASE
-  const supabase = window.supabase.createClient(
-    "https://bjaurtrqrasznuptthyf.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
-  );
-
-  // 🔐 USER
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-
-    window.location.href = "login.html";
-
-    return;
-  }
-
-  // 🎯 ELEMENTOS
-  const studioInput =
-    document.getElementById("studio");
-
-  const usernameInput =
-    document.getElementById("username");
-
-  const logoInput =
-    document.getElementById("logoFile");
-
-  const preview =
-    document.getElementById("preview");
-
-  const msg =
-    document.getElementById("msg");
-
-  const studioTitle =
-    document.getElementById("studioTitle");
-
-  const publicLink =
-    document.getElementById("publicLink");
-
-  const editCard =
-    document.getElementById("editCard");
-
-  let logoUrl = "";
-
-  // 🔍 CARREGAR PERFIL
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (profile) {
-
-    studioInput.value =
-      profile.studio_name || "";
-
-    usernameInput.value =
-      profile.username || "";
-
-    studioTitle.innerText =
-      profile.studio_name || "Meu Studio";
-
-    // 🎨 LOGO
-    if (profile.logo_url) {
-
-      logoUrl =
-        profile.logo_url;
-
-      preview.src =
-        logoUrl;
-    }
-
-    // 🔗 LINK
-    const fullLink =
-      `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
-
-    publicLink.innerHTML = `
-      🔗<br>
-      <span class="font-bold text-pink-600 break-all">
-        ${fullLink}
-      </span>
-    `;
-
-    // 📋 COPIAR
-    document.getElementById("copiar")
-      .addEventListener("click", async () => {
-
-      await navigator.clipboard.writeText(fullLink);
-
-      alert("Link copiado!");
-
-    });
-
-    // 🌍 ABRIR
-    document.getElementById("abrirAgenda")
-      .addEventListener("click", () => {
-
-      window.open(fullLink, "_blank");
-
-    });
-
-  }
-
-  // ✏️ EDITAR
-  document.getElementById("editar")
-    .addEventListener("click", () => {
-
-    editCard.classList.toggle("hidden");
-
-  });
-
-  // 👁️ PREVIEW
-  logoInput.addEventListener("change", () => {
-
-    const file =
-      logoInput.files[0];
-
-    if (!file) return;
-
-    preview.src =
-      URL.createObjectURL(file);
-
-  });
-
-  // 💾 SALVAR
-  document.getElementById("salvar")
-    .addEventListener("click", async () => {
-
-    msg.innerText = "Salvando...";
-
-    const file =
-      logoInput.files[0];
-
-    // 📤 UPLOAD
-    if (file) {
-
-      const fileName =
-        `${user.id}-${Date.now()}`;
-
-      const { error: uploadError } =
-        await supabase.storage
-          .from("logos")
-          .upload(fileName, file, {
-            upsert: true
-          });
-
-      if (uploadError) {
-
-        console.log(uploadError);
-
-        msg.innerText =
-          "Erro upload logo";
-
-        return;
-      }
-
-      const { data } =
-        supabase.storage
-          .from("logos")
-          .getPublicUrl(fileName);
-
-      logoUrl =
-        data.publicUrl;
-
-    }
-
-    // 🔗 USERNAME
-    const username =
-      usernameInput.value
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "");
-
-    // 💾 SALVAR
-    const { error } =
-      await supabase
-        .from("profiles")
-        .upsert({
-          id: user.id,
-          studio_name: studioInput.value,
-          logo_url: logoUrl,
-          username: username
-        });
-
-    if (error) {
-
-      console.log(error);
-
-      msg.innerText =
-        "Erro ao salvar";
-
-      return;
-    }
-
-    msg.innerText =
-      "Perfil atualizado!";
-
-    setTimeout(() => {
-
-      location.reload();
-
-    }, 1000);
-
-  });
-
-  // 🚪 LOGOUT
-  document.getElementById("logout")
-    .addEventListener("click", async () => {
-
-    await supabase.auth.signOut();
-
-    window.location.href =
-      "login.html";
-
-  });
-
-});
-
-</script>
+  <script src="painel.js"></script>
 
 </body>
 </html>
