@@ -35,9 +35,9 @@
   </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-  // 🔗 UMA ÚNICA VEZ
+  // 🔗 SUPABASE (ÚNICO CLIENTE)
   const supabase = window.supabase.createClient(
     "https://bjaurtrqrasznuptthyf.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
@@ -45,6 +45,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const msg = document.getElementById("msg");
 
+  // 🧠 SE JÁ ESTIVER LOGADO, NÃO VOLTA PRO LOGIN
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (session) {
+    window.location.href = "perfil.html";
+    return;
+  }
+
+  // ================= LOGIN =================
   document.getElementById("btnLogin").addEventListener("click", async () => {
 
     const email = document.getElementById("email").value;
@@ -62,9 +71,18 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // 🔥 GARANTE QUE SESSÃO FOI SALVA
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      msg.innerText = "Erro ao iniciar sessão";
+      return;
+    }
+
     window.location.href = "perfil.html";
   });
 
+  // ================= SIGNUP =================
   document.getElementById("btnSignup").addEventListener("click", async () => {
 
     const email = document.getElementById("email").value;
