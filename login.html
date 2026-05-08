@@ -1,11 +1,52 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+</head>
+
+<body class="bg-pink-100 flex items-center justify-center h-screen">
+
+  <div class="bg-white p-6 rounded-xl shadow w-80">
+
+    <h2 class="text-xl mb-4 text-center">Login 💅</h2>
+
+    <input id="email" type="email" placeholder="Email"
+      class="w-full mb-2 p-2 border rounded">
+
+    <input id="password" type="password" placeholder="Senha"
+      class="w-full mb-4 p-2 border rounded">
+
+    <button id="btnLogin"
+      class="w-full bg-pink-500 text-white p-2 rounded mb-2">
+      Entrar
+    </button>
+
+    <button id="btnSignup"
+      class="w-full border p-2 rounded">
+      Criar conta
+    </button>
+
+    <p id="msg" class="text-center text-sm mt-2 text-red-500"></p>
+
+  </div>
 
 <script>
-const supabase = window.supabaseClient;
-
 document.addEventListener("DOMContentLoaded", async () => {
 
+  // 🔗 usa o cliente único do supabase.js
+  const supabase = window.supabaseClient;
+
+  const msg = document.getElementById("msg");
+
+  // 🔐 já logado? manda pro perfil
   const { data: { session } } = await supabase.auth.getSession();
 
   if (session) {
@@ -13,19 +54,55 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  // ================= LOGIN =================
   document.getElementById("btnLogin").onclick = async () => {
 
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
+    msg.innerText = "Entrando...";
+
     const { error } = await supabase.auth.signInWithPassword({
-      email, password
+      email,
+      password
     });
 
-    if (error) return alert(error.message);
+    if (error) {
+      msg.innerText = error.message;
+      return;
+    }
 
     window.location.href = "perfil.html";
   };
 
+  // ================= SIGNUP =================
+  document.getElementById("btnSignup").onclick = async () => {
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (password.length < 6) {
+      msg.innerText = "Senha mínima de 6 caracteres";
+      return;
+    }
+
+    msg.innerText = "Criando conta...";
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password
+    });
+
+    if (error) {
+      msg.innerText = error.message;
+      return;
+    }
+
+    msg.innerText = "Conta criada! Agora faça login.";
+  };
+
 });
 </script>
+
+</body>
+</html>
