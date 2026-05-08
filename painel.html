@@ -4,17 +4,11 @@
 
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>
-    Painel
-  </title>
+  <title>Painel</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 </head>
@@ -26,7 +20,6 @@
     <!-- HEADER -->
     <div class="bg-white rounded-3xl shadow-xl p-6 mb-6">
 
-      <!-- TOPO -->
       <div class="flex flex-col md:flex-row items-center justify-between gap-5">
 
         <!-- PERFIL -->
@@ -35,23 +28,12 @@
           <img
             id="logo"
             src="https://placehold.co/100x100/png"
-            class="
-              w-24
-              h-24
-              rounded-full
-              object-cover
-              border-4
-              border-pink-200
-              shadow
-            "
+            class="w-24 h-24 rounded-full object-cover border-4 border-pink-200 shadow"
           >
 
           <div>
 
-            <h1
-              id="studioName"
-              class="text-3xl font-bold text-gray-800"
-            >
+            <h1 id="studioName" class="text-3xl font-bold text-gray-800">
               Meu Studio
             </h1>
 
@@ -66,42 +48,16 @@
         <!-- AÇÕES -->
         <div class="grid grid-cols-2 gap-3 w-full md:w-auto">
 
-          <!-- PERFIL -->
           <button
             onclick="window.location.href='perfil.html'"
-            class="
-              bg-white
-              border
-              border-pink-300
-              text-pink-600
-              px-4
-              py-3
-              rounded-2xl
-              font-bold
-              hover:bg-pink-50
-              transition
-              shadow
-            "
+            class="bg-white border border-pink-300 text-pink-600 px-4 py-3 rounded-2xl font-bold hover:bg-pink-50 transition shadow"
           >
             Perfil
           </button>
 
-          <!-- SERVIÇOS -->
           <button
             onclick="window.location.href='servicos.html'"
-            class="
-              bg-white
-              border
-              border-pink-300
-              text-pink-600
-              px-4
-              py-3
-              rounded-2xl
-              font-bold
-              hover:bg-pink-50
-              transition
-              shadow
-            "
+            class="bg-white border border-pink-300 text-pink-600 px-4 py-3 rounded-2xl font-bold hover:bg-pink-50 transition shadow"
           >
             Serviços
           </button>
@@ -115,70 +71,29 @@
     <!-- FILTROS -->
     <div class="flex flex-wrap justify-center gap-3 mb-6">
 
-      <!-- AGENDADOS -->
-      <button
-        onclick="filtrar('booked')"
-        id="btn-booked"
-        class="
-          px-5
-          py-3
-          rounded-2xl
-          bg-white
-          text-gray-700
-          shadow
-          font-semibold
-          transition
-        "
-      >
+      <button onclick="filtrar('booked')" id="btn-booked"
+        class="px-5 py-3 rounded-2xl bg-white text-gray-700 shadow font-semibold transition">
         Agendados
       </button>
 
-      <!-- CONCLUÍDOS -->
-      <button
-        onclick="filtrar('done')"
-        id="btn-done"
-        class="
-          px-5
-          py-3
-          rounded-2xl
-          bg-white
-          text-gray-700
-          shadow
-          font-semibold
-          transition
-        "
-      >
+      <button onclick="filtrar('done')" id="btn-done"
+        class="px-5 py-3 rounded-2xl bg-white text-gray-700 shadow font-semibold transition">
         Concluídos
       </button>
 
-      <!-- CANCELADOS -->
-      <button
-        onclick="filtrar('cancelled')"
-        id="btn-cancelled"
-        class="
-          px-5
-          py-3
-          rounded-2xl
-          bg-white
-          text-gray-700
-          shadow
-          font-semibold
-          transition
-        "
-      >
+      <button onclick="filtrar('cancelled')" id="btn-cancelled"
+        class="px-5 py-3 rounded-2xl bg-white text-gray-700 shadow font-semibold transition">
         Cancelados
       </button>
 
     </div>
 
     <!-- LISTA -->
-    <div
-      id="lista"
-      class="space-y-4"
-    ></div>
+    <div id="lista" class="space-y-4"></div>
 
   </div>
 
+  <!-- JS -->
   <script src="painel.js"></script>
 
 </body>
