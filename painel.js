@@ -1,43 +1,75 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
   // 🔗 SUPABASE
-  const supabaseUrl = "https://bjaurtrqrasznuptthyf.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA";
+  const supabaseUrl =
+    "https://bjaurtrqrasznuptthyf.supabase.co";
 
-  const supabase = window.supabase.createClient(
-    supabaseUrl,
-    supabaseKey
-  );
+  const supabaseKey =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA";
 
-  const lista = document.getElementById("lista");
+  const supabase =
+    window.supabase.createClient(
+      supabaseUrl,
+      supabaseKey
+    );
+
+  // 📦 ELEMENTOS
+  const lista =
+    document.getElementById("lista");
 
   let statusAtual = "booked";
 
-  // 🔐 USUÁRIO
+  // 🔐 PEGAR USER
   const {
     data: { user }
   } = await supabase.auth.getUser();
 
+  // 🚫 NÃO LOGADO
   if (!user) {
-    window.location.href = "login.html";
+
+    window.location.href =
+      "login.html";
+
     return;
   }
 
-  // 👤 PEGAR PERFIL
-  const { data: profile } = await supabase
+  // 👤 PERFIL
+  const {
+    data: profile,
+    error: profileError
+  } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
 
-  // 🎨 MOSTRAR PERFIL
+  if (profileError) {
+
+    console.log(profileError);
+
+  }
+
+  // 🎨 SETAR PERFIL
   if (profile) {
 
-    document.getElementById("studioName").innerText =
-      profile.studio_name || "Meu Studio";
+    const studioName =
+      document.getElementById("studioName");
 
-    if (profile.logo_url) {
-      document.getElementById("logo").src =
+    const logo =
+      document.getElementById("logo");
+
+    if (studioName) {
+
+      studioName.innerText =
+        profile.studio_name || "Meu Studio";
+    }
+
+    if (
+      logo &&
+      profile.logo_url
+    ) {
+
+      logo.src =
         profile.logo_url;
     }
 
@@ -59,29 +91,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!btn) return;
 
+      // ✅ ATIVO
       if (status === statusAtual) {
-
-        btn.classList.add(
-          "bg-pink-500",
-          "text-white"
-        );
 
         btn.classList.remove(
           "bg-white",
           "text-gray-700"
+        );
+
+        btn.classList.add(
+          "bg-pink-500",
+          "text-white",
+          "shadow-lg",
+          "scale-105"
         );
 
       } else {
 
         btn.classList.remove(
           "bg-pink-500",
-          "text-white"
+          "text-white",
+          "shadow-lg",
+          "scale-105"
         );
 
         btn.classList.add(
           "bg-white",
           "text-gray-700"
         );
+
       }
 
     });
@@ -91,82 +129,179 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 📥 CARREGAR AGENDAMENTOS
   async function carregarAgendamentos() {
 
-    lista.innerHTML = "Carregando...";
+    lista.innerHTML = `
+      <div class="text-center text-gray-500 py-10">
+        Carregando...
+      </div>
+    `;
 
-    const { data, error } = await supabase
-      .from("appointments")
-      .select("*")
-      .eq("user_id", user.id)
-      .or(`status.ilike.${statusAtual},status.is.null`)
-      .order("date", { ascending: true })
-      .order("time", { ascending: true });
+    // 🔍 QUERY
+    let query =
+      supabase
+        .from("appointments")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("date", {
+          ascending: true
+        })
+        .order("time", {
+          ascending: true
+        });
 
+    // 📌 FILTROS
+    if (statusAtual === "booked") {
+
+      query =
+        query.or(
+          "status.eq.booked,status.is.null"
+        );
+
+    } else {
+
+      query =
+        query.eq(
+          "status",
+          statusAtual
+        );
+
+    }
+
+    // 🚀 EXECUTAR
+    const {
+      data,
+      error
+    } = await query;
+
+    // ❌ ERRO
     if (error) {
+
       console.log(error);
-      lista.innerHTML = "Erro ao carregar";
+
+      lista.innerHTML = `
+        <div class="text-center text-red-500 py-10">
+          Erro ao carregar
+        </div>
+      `;
+
       return;
     }
 
+    // 🚫 VAZIO
     if (!data || data.length === 0) {
-      lista.innerHTML = "Nenhum agendamento";
+
+      lista.innerHTML = `
+        <div class="text-center text-gray-400 py-10">
+          Nenhum agendamento
+        </div>
+      `;
+
       return;
     }
 
+    // 🔄 LIMPAR
     lista.innerHTML = "";
 
+    // 🎨 RENDER
     data.forEach(item => {
 
-      const div = document.createElement("div");
+      const div =
+        document.createElement("div");
 
-      let cor = "bg-white";
+      // 🎨 CORES
+      let cor =
+        "bg-white border-pink-100";
 
-      if (item.status === "done")
-        cor = "bg-green-100";
+      if (item.status === "done") {
 
-      if (item.status === "cancelled")
-        cor = "bg-red-100";
+        cor =
+          "bg-green-50 border-green-200";
+      }
+
+      if (item.status === "cancelled") {
+
+        cor =
+          "bg-red-50 border-red-200";
+      }
 
       div.className =
-        `p-4 rounded-2xl shadow ${cor}`;
+        `
+        p-5
+        rounded-3xl
+        shadow-md
+        border
+        ${cor}
+        transition
+      `;
 
       div.innerHTML = `
-        <p class="font-bold text-lg">
-          ${item.name}
-        </p>
 
-        <p class="mt-1">
-          💅 ${item.service}
-        </p>
+        <div class="flex items-center justify-between">
 
-        <p class="text-sm text-gray-600 mt-1">
-          📅 ${item.date} às ${item.time}
-        </p>
+          <div>
+
+            <h2 class="font-bold text-lg text-gray-800">
+              ${item.name}
+            </h2>
+
+            <p class="text-gray-600 mt-1">
+              💅 ${item.service}
+            </p>
+
+            <p class="text-sm text-gray-500 mt-1">
+              📅 ${item.date} às ${item.time}
+            </p>
+
+          </div>
+
+        </div>
 
         ${
           item.status === "booked" ||
           item.status === null
 
             ? `
-          <div class="mt-3 flex gap-2">
+
+          <div class="flex gap-2 mt-4">
 
             <button
               onclick="concluir(${item.id})"
-              class="bg-green-500 text-white px-3 py-1 rounded-xl"
+              class="
+                flex-1
+                bg-green-500
+                hover:bg-green-600
+                text-white
+                py-2
+                rounded-2xl
+                font-semibold
+                transition
+              "
             >
               Concluir
             </button>
 
             <button
               onclick="cancelar(${item.id})"
-              class="bg-red-500 text-white px-3 py-1 rounded-xl"
+              class="
+                flex-1
+                bg-red-500
+                hover:bg-red-600
+                text-white
+                py-2
+                rounded-2xl
+                font-semibold
+                transition
+              "
             >
               Cancelar
             </button>
 
           </div>
+
         `
             : ""
+
         }
+
       `;
 
       lista.appendChild(div);
@@ -183,36 +318,60 @@ document.addEventListener("DOMContentLoaded", async () => {
     atualizarBotoesAtivos();
 
     carregarAgendamentos();
+
   };
 
   // ✅ CONCLUIR
   window.concluir = async function (id) {
 
-    await supabase
-      .from("appointments")
-      .update({
-        status: "done"
-      })
-      .eq("id", id)
-      .eq("user_id", user.id);
+    const { error } =
+      await supabase
+        .from("appointments")
+        .update({
+          status: "done"
+        })
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+    if (error) {
+
+      console.log(error);
+
+      alert("Erro ao concluir");
+
+      return;
+    }
 
     carregarAgendamentos();
+
   };
 
   // ❌ CANCELAR
   window.cancelar = async function (id) {
 
-    await supabase
-      .from("appointments")
-      .update({
-        status: "cancelled"
-      })
-      .eq("id", id)
-      .eq("user_id", user.id);
+    const { error } =
+      await supabase
+        .from("appointments")
+        .update({
+          status: "cancelled"
+        })
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+    if (error) {
+
+      console.log(error);
+
+      alert("Erro ao cancelar");
+
+      return;
+    }
 
     carregarAgendamentos();
+
   };
 
+  // 🚀 INICIAR
   atualizarBotoesAtivos();
 
   carregarAgendamentos();
