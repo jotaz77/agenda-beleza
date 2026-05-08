@@ -212,6 +212,20 @@
 
     </div>
 
+    <!-- DISPONIBILIDADE -->
+    <div class="bg-white rounded-3xl shadow-xl p-6 mt-5">
+
+      <h2 class="text-xl font-bold mb-5">
+        Disponibilidade 📅
+      </h2>
+
+      <div
+        id="availabilityList"
+        class="space-y-4"
+      ></div>
+
+    </div>
+
   </div>
 
 <script>
@@ -260,6 +274,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const editCard =
     document.getElementById("editCard");
+
+  const availabilityList =
+    document.getElementById("availabilityList");
 
   let logoUrl = "";
 
@@ -343,7 +360,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   });
 
-  // 💾 SALVAR
+  // 💾 SALVAR PERFIL
   document.getElementById("salvar")
     .addEventListener("click", async () => {
 
@@ -423,6 +440,193 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 1000);
 
   });
+
+  // =========================
+  // DISPONIBILIDADE
+  // =========================
+
+  const diasSemana = [
+    "Domingo",
+    "Segunda",
+    "Terça",
+    "Quarta",
+    "Quinta",
+    "Sexta",
+    "Sábado"
+  ];
+
+  // 🔍 CARREGAR DISPONIBILIDADE
+  async function carregarDisponibilidade() {
+
+    availabilityList.innerHTML = "";
+
+    const {
+      data,
+      error
+    } = await supabase
+      .from("availability")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("weekday", {
+        ascending: true
+      });
+
+    if (error) {
+
+      console.log(error);
+
+      return;
+    }
+
+    for (let i = 0; i < 7; i++) {
+
+      const dia =
+        data.find(item => item.weekday === i);
+
+      const div =
+        document.createElement("div");
+
+      div.className =
+        "border rounded-2xl p-4";
+
+      div.innerHTML = `
+
+        <div class="flex items-center justify-between mb-3">
+
+          <h3 class="font-bold text-lg">
+            ${diasSemana[i]}
+          </h3>
+
+          <label class="flex items-center gap-2 text-sm">
+
+            <input
+              type="checkbox"
+              id="active-${i}"
+              ${dia?.active !== false ? "checked" : ""}
+            >
+
+            Disponível
+
+          </label>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+
+          <div>
+
+            <label class="text-sm text-gray-500">
+              Início
+            </label>
+
+            <input
+              type="time"
+              id="start-${i}"
+              value="${dia?.start_time || "09:00"}"
+              class="w-full p-3 border rounded-xl"
+            >
+
+          </div>
+
+          <div>
+
+            <label class="text-sm text-gray-500">
+              Fim
+            </label>
+
+            <input
+              type="time"
+              id="end-${i}"
+              value="${dia?.end_time || "18:00"}"
+              class="w-full p-3 border rounded-xl"
+            >
+
+          </div>
+
+        </div>
+
+        <button
+          onclick="salvarDisponibilidade(${i})"
+          class="
+            mt-4
+            w-full
+            bg-pink-500
+            hover:bg-pink-600
+            transition
+            text-white
+            p-3
+            rounded-2xl
+            font-bold
+          "
+        >
+          Salvar ${diasSemana[i]}
+        </button>
+
+      `;
+
+      availabilityList.appendChild(div);
+
+    }
+
+  }
+
+  // 💾 SALVAR DISPONIBILIDADE
+  window.salvarDisponibilidade =
+    async function (weekday) {
+
+    const start =
+      document.getElementById(`start-${weekday}`).value;
+
+    const end =
+      document.getElementById(`end-${weekday}`).value;
+
+    const active =
+      document.getElementById(`active-${weekday}`).checked;
+
+    // 🔍 EXISTE?
+    const {
+      data: existing
+    } = await supabase
+      .from("availability")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("weekday", weekday)
+      .maybeSingle();
+
+    // ✏️ UPDATE
+    if (existing) {
+
+      await supabase
+        .from("availability")
+        .update({
+          start_time: start,
+          end_time: end,
+          active: active
+        })
+        .eq("id", existing.id);
+
+    } else {
+
+      // ➕ INSERT
+      await supabase
+        .from("availability")
+        .insert([
+          {
+            user_id: user.id,
+            weekday: weekday,
+            start_time: start,
+            end_time: end,
+            active: active
+          }
+        ]);
+
+    }
+
+    alert("Disponibilidade salva!");
+
+  };
+
+  carregarDisponibilidade();
 
   // 🚪 LOGOUT
   document.getElementById("logout")
