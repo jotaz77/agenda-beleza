@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agendamento PRO</title>
+<title>Agendamento</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -16,18 +16,20 @@
   <div class="text-center mb-6">
     <img id="logo"
       src="https://placehold.co/100x100/png"
-      class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-pink-200 mb-3"
-    >
+      class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-pink-200 mb-3">
+
     <h1 id="studioName" class="text-2xl font-bold text-gray-800">Studio</h1>
   </div>
 
   <label class="font-semibold">Serviço</label>
-  <select id="service" class="w-full p-3 border rounded-xl mb-4"></select>
+  <select id="service" class="w-full p-3 border rounded-xl mb-4">
+    <option>Carregando...</option>
+  </select>
 
   <label class="font-semibold">Data</label>
   <input type="date" id="date" class="w-full p-3 border rounded-xl mb-4">
 
-  <label class="font-semibold">Horário</label>
+  <label class="font-semibold">Horários</label>
   <div id="times" class="grid grid-cols-3 gap-2 mb-4"></div>
 
   <input id="name" placeholder="Seu nome" class="w-full p-3 border rounded-xl mb-3">
@@ -48,131 +50,115 @@ document.addEventListener("DOMContentLoaded", async () => {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
   );
 
-  const timesDiv = document.getElementById("times");
-
-  let ownerId = null;
-  let selectedTime = null;
-
   const params = new URLSearchParams(window.location.search);
   const username = params.get("studio");
 
-  if (!username) return alert("Studio não encontrado");
+  if (!username) {
+    alert("Studio não encontrado");
+    return;
+  }
 
+  let ownerId = null;
+  let slots = [];
+  let selectedSlot = null;
+
+  const timesDiv = document.getElementById("times");
+
+  // 🔵 PERFIL
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("username", username)
     .single();
 
-  if (!profile) return alert("Studio não encontrado");
+  if (!profile) {
+    alert("Studio não encontrado");
+    return;
+  }
 
   ownerId = profile.id;
 
-  document.getElementById("studioName").innerText = profile.studio_name;
+  document.getElementById("studioName").innerText = profile.studio_name || "Studio";
   if (profile.logo_url) document.getElementById("logo").src = profile.logo_url;
 
-  // ================= SERVIÇOS =================
-  const serviceSelect = document.getElementById("service");
-
+  // 🔵 SERVIÇOS
   const { data: services } = await supabase
     .from("services")
     .select("*")
     .eq("user_id", ownerId)
     .eq("active", true);
 
+  const serviceSelect = document.getElementById("service");
   serviceSelect.innerHTML = "";
 
-  services.forEach(s => {
+  (services || []).forEach(s => {
     const opt = document.createElement("option");
-    opt.value = `${s.name} - R$ ${s.price}`;
-    opt.innerText = `${s.name} - R$ ${s.price}`;
+    opt.value = `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
+    opt.innerText = `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
     serviceSelect.appendChild(opt);
   });
 
-  // ================= DISPONIBILIDADE =================
+  // 🔵 PEGAR CONFIG (PROFILE OU GLOBAL FUTURO)
+  const slotInterval = profile.slot_interval || 30;
+  const openTime = profile.open_time || "09:00";
+  const closeTime = profile.close_time || "18:00";
 
-  function toMinutes(t) {
-    const [h, m] = t.split(":").map(Number);
-    return h * 60 + m;
-  }
+  function gerarSlots() {
+    const result = [];
 
-  function toTime(min) {
-    const h = String(Math.floor(min / 60)).padStart(2, "0");
-    const m = String(min % 60).padStart(2, "0");
-    return `${h}:${m}`;
-  }
+    let [h, m] = openTime.split(":").map(Number);
+    const [hEnd, mEnd] = closeTime.split(":").map(Number);
 
-  function gerarHorarios(start, end, interval) {
-    const slots = [];
-    let s = toMinutes(start);
-    const e = toMinutes(end);
+    while (h < hEnd || (h === hEnd && m < mEnd)) {
 
-    while (s < e) {
-      slots.push(toTime(s));
-      s += interval;
+      const time = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      result.push(time);
+
+      m += slotInterval;
+      if (m >= 60) {
+        h += Math.floor(m / 60);
+        m = m % 60;
+      }
     }
 
-    return slots;
+    return result;
   }
 
-  async function renderHorarios() {
+  // 🔵 OCUPADOS
+  async function getBusy(date) {
 
-    const date = document.getElementById("date").value;
-    if (!date) return;
-
-    const weekday = new Date(date).getDay();
-
-    const { data: avail } = await supabase
-      .from("availability")
-      .select("*")
-      .eq("user_id", ownerId)
-      .eq("weekday", weekday)
-      .single();
-
-    if (!avail || avail.active === false) {
-      timesDiv.innerHTML = "<p class='text-red-400'>Fechado neste dia</p>";
-      return;
-    }
-
-    const interval = profile.slot_interval || 30;
-
-    const slots = gerarHorarios(
-      avail.start_time,
-      avail.end_time,
-      interval
-    );
-
-    const { data: appointments } = await supabase
+    const { data } = await supabase
       .from("appointments")
       .select("time")
       .eq("date", date)
       .eq("user_id", ownerId);
 
-    const countMap = {};
+    return (data || []).map(d => d.time);
+  }
 
-    appointments.forEach(a => {
-      countMap[a.time] = (countMap[a.time] || 0) + 1;
-    });
-
-    const capacity = profile.capacity || 1;
+  // 🔵 RENDER HORÁRIOS
+  async function render(date) {
 
     timesDiv.innerHTML = "";
 
-    slots.forEach(time => {
+    if (!date) return;
 
-      const ocupacao = countMap[time] || 0;
+    const busy = await getBusy(date);
+    slots = gerarSlots();
+
+    slots.forEach(t => {
 
       const btn = document.createElement("button");
-      btn.innerText = time;
+      btn.innerText = t;
 
-      if (ocupacao >= capacity) {
+      if (busy.includes(t)) {
         btn.className = "bg-gray-300 p-2 rounded-xl opacity-50";
         btn.disabled = true;
       } else {
         btn.className = "bg-pink-100 hover:bg-pink-200 p-2 rounded-xl";
 
         btn.onclick = () => {
-          selectedTime = time;
+          selectedSlot = t;
 
           document.querySelectorAll("#times button")
             .forEach(b => b.classList.remove("bg-pink-500","text-white"));
@@ -185,12 +171,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  document.getElementById("date").addEventListener("change", () => {
-    selectedTime = null;
-    renderHorarios();
+  document.getElementById("date").addEventListener("change", (e) => {
+    selectedSlot = null;
+    render(e.target.value);
   });
 
-  // ================= AGENDAR =================
+  // 🔵 AGENDAR
   window.agendar = async function () {
 
     const name = document.getElementById("name").value;
@@ -198,8 +184,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const date = document.getElementById("date").value;
     const service = document.getElementById("service").value;
 
-    if (!name || !phone || !date || !selectedTime) {
-      return alert("Preencha tudo!");
+    if (!name || !phone || !date || !selectedSlot) {
+      alert("Preencha tudo!");
+      return;
     }
 
     const { error } = await supabase
@@ -210,19 +197,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         phone,
         service,
         date,
-        time: selectedTime,
+        time: selectedSlot,
         status: "booked"
       }]);
 
     if (error) {
-      console.log(error);
-      return alert("Erro ao agendar");
+      alert("Erro ao salvar");
+      return;
     }
 
-    alert("Agendado com sucesso!");
+    alert("Agendamento realizado!");
 
-    selectedTime = null;
-    renderHorarios();
+    selectedSlot = null;
+    render(date);
   };
 
 });
