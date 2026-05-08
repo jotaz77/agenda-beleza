@@ -7,14 +7,13 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 </head>
 
 <body class="bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 min-h-screen p-4">
 
 <div class="max-w-md mx-auto">
 
-  <!-- CARD -->
+  <!-- CARD PRINCIPAL -->
   <div class="bg-white rounded-3xl shadow-xl p-6">
 
     <img id="preview"
@@ -27,6 +26,7 @@
       Meu Studio
     </h1>
 
+    <!-- LINK -->
     <div id="publicLink"
       class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
     </div>
@@ -72,8 +72,7 @@
     <input id="username" placeholder="username"
       class="w-full mb-3 p-3 border rounded-2xl">
 
-    <input type="file" id="logoFile"
-      class="w-full mb-4">
+    <input type="file" id="logoFile" class="w-full mb-4">
 
     <button id="salvar"
       class="w-full bg-pink-500 text-white p-3 rounded-2xl font-bold">
@@ -93,7 +92,7 @@
 
       <div>
         <label>Atendimentos simultâneos</label>
-        <input type="number" id="capacity" min="1" value="1"
+        <input type="number" id="capacity" min="1"
           class="w-full p-3 border rounded-xl">
       </div>
 
@@ -102,7 +101,7 @@
         <select id="slotInterval"
           class="w-full p-3 border rounded-xl">
           <option value="15">15 min</option>
-          <option value="30" selected>30 min</option>
+          <option value="30">30 min</option>
           <option value="60">1h</option>
         </select>
       </div>
@@ -120,24 +119,25 @@
 
 <script>
 
+const client = supabase.createClient(
+  "https://bjaurtrqrasznuptthyf.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ..."
+);
+
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // ✅ FIX: nome diferente pra não conflitar
-  const supabaseClient = window.supabase.createClient(
-    "https://bjaurtrqrasznuptthyf.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
-  );
-
-  const { data: { user } } = await supabaseClient.auth.getUser();
-
+  const { data: { user } } = await client.auth.getUser();
   if (!user) location.href = "login.html";
 
-  // 🔥 CARREGA PERFIL
-  const { data: profile } = await supabaseClient
+  let profileData = null;
+
+  const { data: profile } = await client
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .maybeSingle();
+    .single();
+
+  profileData = profile;
 
   if (profile) {
 
@@ -150,32 +150,58 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("studioTitle").innerText =
       profile.studio_name || "Meu Studio";
 
-    if (profile.logo_url) {
-      document.getElementById("preview").src = profile.logo_url;
-    }
+    const link = `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
+
+    document.getElementById("publicLink").innerHTML =
+      `🔗<br><b class="text-pink-600 break-all">${link}</b>`;
+
+    document.getElementById("copiar").onclick = async () => {
+      await navigator.clipboard.writeText(link);
+      alert("Link copiado!");
+    };
+
+    document.getElementById("abrirAgenda").onclick = () => {
+      window.open(link, "_blank");
+    };
   }
 
-  // 💾 SALVAR CONFIG
+  // EDIT
+  document.getElementById("editar").onclick = () => {
+    document.getElementById("editCard").classList.toggle("hidden");
+  };
+
+  // SALVAR PERFIL
+  document.getElementById("salvar").onclick = async () => {
+
+    const studio_name = document.getElementById("studio").value;
+    const username = document.getElementById("username").value;
+
+    await client.from("profiles").update({
+      studio_name,
+      username
+    }).eq("id", user.id);
+
+    alert("Salvo!");
+    location.reload();
+  };
+
+  // CONFIG
   document.getElementById("saveSettings").onclick = async () => {
 
     const capacity = Number(document.getElementById("capacity").value);
     const slot_interval = Number(document.getElementById("slotInterval").value);
 
-    const { error } = await supabaseClient
+    const { error } = await client
       .from("profiles")
-      .update({
-        capacity,
-        slot_interval
-      })
+      .update({ capacity, slot_interval })
       .eq("id", user.id);
 
     if (error) {
       console.log(error);
-      alert("Erro ao salvar config");
-      return;
+      return alert("Erro ao salvar config");
     }
 
-    alert("Salvo com sucesso!");
+    alert("Config salva!");
   };
 
 });
