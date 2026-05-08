@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const editCard = document.getElementById("editCard");
   const availabilityList = document.getElementById("availabilityList");
 
-  let logoUrl = "";
+  let profileData = null;
 
   // ================= PERFIL =================
   const { data: profile } = await supabase
@@ -157,6 +157,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     .eq("id", user.id)
     .single();
 
+  profileData = profile;
+
   if (profile) {
 
     studioInput.value = profile.studio_name || "";
@@ -164,8 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     studioTitle.innerText = profile.studio_name || "Meu Studio";
 
     if (profile.logo_url) {
-      logoUrl = profile.logo_url;
-      preview.src = logoUrl;
+      preview.src = profile.logo_url;
     }
 
     const fullLink =
@@ -186,10 +187,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
-  // botão editar SEM quebrar JS
+  // abrir/fechar edição
   document.getElementById("editar")?.addEventListener("click", () => {
     editCard.classList.toggle("hidden");
   });
+
+  // ================= SALVAR PERFIL =================
+  document.getElementById("salvar").onclick = async () => {
+
+    const studio_name = studioInput.value;
+    const username = usernameInput.value;
+    const msg = document.getElementById("msg");
+
+    msg.innerText = "Salvando...";
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        studio_name,
+        username
+      })
+      .eq("id", user.id);
+
+    if (error) {
+      msg.innerText = "Erro ao salvar";
+      return;
+    }
+
+    msg.innerText = "Salvo com sucesso!";
+  };
+
+  // ================= LOGOUT =================
+  document.getElementById("logout").onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "login.html";
+  };
 
   // ================= CONFIG =================
   const { data: config } = await supabase
@@ -213,7 +245,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       .update({ capacity, slot_interval })
       .eq("id", user.id);
 
-    // salvar disponibilidade também
     for (let i = 0; i < 7; i++) {
 
       const start = document.getElementById(`start-${i}`)?.value || "09:00";
@@ -229,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    alert("Tudo salvo com sucesso!");
+    alert("Configurações salvas!");
   };
 
   // ================= DISPONIBILIDADE =================
