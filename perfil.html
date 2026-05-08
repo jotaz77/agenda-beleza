@@ -117,7 +117,6 @@
 
       </div>
 
-      <!-- BOTÃO ÚNICO -->
       <button id="saveSettings"
         class="w-full mb-6 bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-2xl font-bold">
         Salvar Configurações Gerais
@@ -141,7 +140,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return window.location.href = "login.html";
 
+  const studioInput = document.getElementById("studio");
+  const usernameInput = document.getElementById("username");
+  const preview = document.getElementById("preview");
+  const studioTitle = document.getElementById("studioTitle");
+  const publicLink = document.getElementById("publicLink");
+  const editCard = document.getElementById("editCard");
   const availabilityList = document.getElementById("availabilityList");
+
+  let logoUrl = "";
 
   // ================= PERFIL =================
   const { data: profile } = await supabase
@@ -150,19 +157,63 @@ document.addEventListener("DOMContentLoaded", async () => {
     .eq("id", user.id)
     .single();
 
-  // ================= BOTÃO ÚNICO SALVAR =================
+  if (profile) {
+
+    studioInput.value = profile.studio_name || "";
+    usernameInput.value = profile.username || "";
+    studioTitle.innerText = profile.studio_name || "Meu Studio";
+
+    if (profile.logo_url) {
+      logoUrl = profile.logo_url;
+      preview.src = logoUrl;
+    }
+
+    const fullLink =
+      `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
+
+    publicLink.innerHTML = `
+      🔗<br>
+      <span class="font-bold text-pink-600 break-all">${fullLink}</span>
+    `;
+
+    document.getElementById("copiar").onclick = async () => {
+      await navigator.clipboard.writeText(fullLink);
+      alert("Link copiado!");
+    };
+
+    document.getElementById("abrirAgenda").onclick = () => {
+      window.open(fullLink, "_blank");
+    };
+  }
+
+  // botão editar SEM quebrar JS
+  document.getElementById("editar")?.addEventListener("click", () => {
+    editCard.classList.toggle("hidden");
+  });
+
+  // ================= CONFIG =================
+  const { data: config } = await supabase
+    .from("profiles")
+    .select("capacity, slot_interval")
+    .eq("id", user.id)
+    .single();
+
+  if (config) {
+    document.getElementById("capacity").value = config.capacity || 1;
+    document.getElementById("slotInterval").value = config.slot_interval || 30;
+  }
+
   document.getElementById("saveSettings").onclick = async () => {
 
     const capacity = parseInt(document.getElementById("capacity").value);
     const slot_interval = parseInt(document.getElementById("slotInterval").value);
 
-    // salva config geral
     await supabase
       .from("profiles")
       .update({ capacity, slot_interval })
       .eq("id", user.id);
 
-    // salva disponibilidade dos 7 dias
+    // salvar disponibilidade também
     for (let i = 0; i < 7; i++) {
 
       const start = document.getElementById(`start-${i}`)?.value || "09:00";
@@ -178,7 +229,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    alert("Configurações salvas com sucesso!");
+    alert("Tudo salvo com sucesso!");
   };
 
   // ================= DISPONIBILIDADE =================
@@ -188,17 +239,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     availabilityList.innerHTML = "";
 
-    const { data } = await supabase
+    const { data: raw } = await supabase
       .from("availability")
       .select("*")
       .eq("user_id", user.id);
 
+    const data = raw || [];
+
     for (let i = 0; i < 7; i++) {
 
-      const dia = data?.find(d => d.weekday === i);
+      const dia = data.find(d => d.weekday === i);
 
       const div = document.createElement("div");
-
       div.className = "border p-4 rounded-2xl";
 
       div.innerHTML = `
