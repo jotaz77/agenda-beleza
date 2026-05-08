@@ -12,6 +12,7 @@
 
   <div class="bg-white rounded-3xl shadow-xl p-6 w-full max-w-md">
 
+    <!-- TOPO -->
     <div class="text-center mb-6">
 
       <img
@@ -22,13 +23,14 @@
 
       <h1
         id="studioName"
-        class="text-2xl font-bold"
+        class="text-2xl font-bold text-gray-800"
       >
         Studio
       </h1>
 
     </div>
 
+    <!-- SERVIÇO -->
     <label class="font-semibold">
       Serviço
     </label>
@@ -42,6 +44,7 @@
       <option>Alongamento - R$80</option>
     </select>
 
+    <!-- DATA -->
     <label class="font-semibold">
       Data
     </label>
@@ -52,6 +55,7 @@
       class="w-full p-3 border rounded-xl mb-4"
     >
 
+    <!-- HORÁRIOS -->
     <label class="font-semibold">
       Horário
     </label>
@@ -61,6 +65,7 @@
       class="grid grid-cols-3 gap-2 mb-4"
     ></div>
 
+    <!-- INPUTS -->
     <input
       id="name"
       placeholder="Seu nome"
@@ -73,9 +78,10 @@
       class="w-full p-3 border rounded-xl mb-4"
     >
 
+    <!-- BOTÃO -->
     <button
       onclick="agendar()"
-      class="w-full bg-pink-500 text-white p-3 rounded-xl font-bold"
+      class="w-full bg-pink-500 hover:bg-pink-600 transition text-white p-3 rounded-xl font-bold"
     >
       Confirmar agendamento
     </button>
@@ -85,11 +91,27 @@
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
 
+  // 🔗 SUPABASE
   const supabase = window.supabase.createClient(
     "https://bjaurtrqrasznuptthyf.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
   );
 
+  // ⏰ HORÁRIOS
+  const horariosBase = [
+    "09:00", "10:00", "11:00",
+    "13:00", "14:00", "15:00",
+    "16:00", "17:00"
+  ];
+
+  const timesDiv =
+    document.getElementById("times");
+
+  let horarioSelecionado = null;
+
+  let ownerId = null;
+
+  // 🔍 PEGAR USERNAME
   const params =
     new URLSearchParams(window.location.search);
 
@@ -97,30 +119,227 @@ document.addEventListener("DOMContentLoaded", async () => {
     params.get("studio");
 
   if (!username) {
+
     alert("Studio não encontrado");
+
     return;
   }
 
   // 🔍 PEGAR PERFIL
-  const { data: profile } = await supabase
+  const {
+    data: profile,
+    error: profileError
+  } = await supabase
     .from("profiles")
     .select("*")
     .eq("username", username)
     .single();
 
-  if (!profile) {
+  if (profileError || !profile) {
+
+    console.log(profileError);
+
     alert("Studio não encontrado");
+
     return;
   }
 
+  // 🧠 DONA DO STUDIO
+  ownerId = profile.id;
+
   // 🎨 SETAR PERFIL
   document.getElementById("studioName")
-    .innerText = profile.studio_name;
+    .innerText =
+      profile.studio_name;
 
   if (profile.logo_url) {
+
     document.getElementById("logo")
-      .src = profile.logo_url;
+      .src =
+        profile.logo_url;
   }
+
+  // 🔍 BUSCAR HORÁRIOS OCUPADOS
+  async function buscarHorariosOcupados(dataSelecionada) {
+
+    const {
+      data,
+      error
+    } = await supabase
+      .from("appointments")
+      .select("time")
+      .eq("date", dataSelecionada)
+      .eq("user_id", ownerId);
+
+    if (error) {
+
+      console.log(error);
+
+      return [];
+    }
+
+    return data.map(item => item.time);
+  }
+
+  // 🎯 RENDER HORÁRIOS
+  async function renderHorarios() {
+
+    const date =
+      document.getElementById("date").value;
+
+    timesDiv.innerHTML = "";
+
+    if (!date) {
+
+      timesDiv.innerHTML =
+        "<p class='text-gray-400'>Escolha uma data</p>";
+
+      return;
+    }
+
+    const ocupados =
+      await buscarHorariosOcupados(date);
+
+    horariosBase.forEach(h => {
+
+      const btn =
+        document.createElement("button");
+
+      btn.innerText = h;
+
+      // 🔒 HORÁRIO OCUPADO
+      if (ocupados.includes(h)) {
+
+        btn.className =
+          "bg-gray-300 p-2 rounded-xl opacity-50";
+
+        btn.disabled = true;
+
+      } else {
+
+        btn.className =
+          "bg-pink-100 hover:bg-pink-200 transition p-2 rounded-xl";
+
+        btn.onclick = () => {
+
+          horarioSelecionado = h;
+
+          document
+            .querySelectorAll("#times button")
+            .forEach(b => {
+
+              b.classList.remove(
+                "bg-pink-500",
+                "text-white"
+              );
+
+            });
+
+          btn.classList.add(
+            "bg-pink-500",
+            "text-white"
+          );
+
+        };
+
+      }
+
+      timesDiv.appendChild(btn);
+
+    });
+
+  }
+
+  // 📅 MUDOU DATA
+  document
+    .getElementById("date")
+    .addEventListener("change", () => {
+
+      horarioSelecionado = null;
+
+      renderHorarios();
+
+    });
+
+  // 🚀 AGENDAR
+  window.agendar = async function () {
+
+    const name =
+      document.getElementById("name").value;
+
+    const phone =
+      document.getElementById("phone").value;
+
+    const date =
+      document.getElementById("date").value;
+
+    const service =
+      document.getElementById("service").value;
+
+    // 🚨 VALIDAÇÃO
+    if (
+      !name ||
+      !phone ||
+      !date ||
+      !horarioSelecionado
+    ) {
+
+      alert("Preencha tudo!");
+
+      return;
+    }
+
+    // 💾 SALVAR
+    const { error } =
+      await supabase
+        .from("appointments")
+        .insert([
+          {
+            user_id: ownerId,
+            name,
+            phone,
+            service,
+            date,
+            time: horarioSelecionado,
+            status: "booked"
+          }
+        ]);
+
+    if (error) {
+
+      console.log(error);
+
+      alert("Erro ao salvar");
+
+      return;
+    }
+
+    // 💬 WHATSAPP
+    const msg =
+`Novo agendamento 💅
+
+Nome: ${name}
+Serviço: ${service}
+Data: ${date}
+Hora: ${horarioSelecionado}`;
+
+    const url =
+      `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+
+    window.open(url, "_blank");
+
+    // ✅ SUCESSO
+    alert("Agendamento realizado!");
+
+    // 🔄 RESET
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+
+    horarioSelecionado = null;
+
+    renderHorarios();
+
+  };
 
 });
 </script>
