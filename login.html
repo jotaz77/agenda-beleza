@@ -9,11 +9,6 @@
 
   <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  const supabase = window.supabase.createClient(
-  "https://bjaurtrqrasznuptthyf.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
-);
 </head>
 
 <body class="bg-pink-100 flex items-center justify-center h-screen">
@@ -45,12 +40,15 @@
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // 🔗 usa o cliente único do supabase.js
-  const supabase = window.supabaseClient;
+  // 🔗 cria o supabase AQUI (único, correto)
+  const supabase = window.supabase.createClient(
+    "https://bjaurtrqrasznuptthyf.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
+  );
 
   const msg = document.getElementById("msg");
 
-  // 🔐 já logado? manda pro perfil
+  // 🔐 se já estiver logado
   const { data: { session } } = await supabase.auth.getSession();
 
   if (session) {
