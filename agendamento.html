@@ -118,12 +118,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
   );
 
-  // ⏰ HORÁRIOS
-  const horariosBase = [
-    "09:00", "10:00", "11:00",
-    "13:00", "14:00", "15:00",
-    "16:00", "17:00"
-  ];
+  // ⏰ HORÁRIOS DO STUDIO
+  let horariosBase = [];
 
   const timesDiv =
     document.getElementById("times");
@@ -167,6 +163,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 🧠 DONA DO STUDIO
   ownerId = profile.id;
+
+  // 🔍 BUSCAR HORÁRIOS DO STUDIO
+  const {
+    data: horarios
+  } = await supabase
+    .from("availability")
+    .select("*")
+    .eq("user_id", ownerId)
+    .order("time", {
+      ascending: true
+    });
+
+  // 🎯 TRANSFORMAR ARRAY
+  horariosBase =
+    horarios.map(h => h.time);
 
   // 🎨 SETAR PERFIL
   document.getElementById("studioName")
@@ -275,6 +286,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       timesDiv.innerHTML =
         "<p class='text-gray-400'>Escolha uma data</p>";
+
+      return;
+    }
+
+    // 🚨 SEM HORÁRIOS
+    if (horariosBase.length === 0) {
+
+      timesDiv.innerHTML =
+        "<p class='text-red-400'>Studio sem horários disponíveis</p>";
 
       return;
     }
