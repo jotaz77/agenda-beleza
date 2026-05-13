@@ -161,86 +161,87 @@ async function getBusy(date) {
 }
 
   // 🔵 RENDER HORÁRIOS
-  async function render(date) {
+async function render(date) {
 
-    timesDiv.innerHTML = "";
+  timesDiv.innerHTML = "";
 
-    if (!date) return;
+  if (!date) return;
 
-    const appointments = await getBusy(date);
-    const capacity = profile.capacity || 1;
-    slots = gerarSlots();
-    
-    //FOREACH (para eu achar rapidinho onde ele ta)
-    
-slots.forEach(t => {
+  const appointments = await getBusy(date);
+  const capacity = profile.capacity || 1;
 
-  const btn = document.createElement("button");
-  btn.innerText = t;
+  slots = gerarSlots();
 
-  let ocupados = 0;
+  slots.forEach(t => {
 
-  appointments.forEach(app => {
+    const btn = document.createElement("button");
+    btn.innerText = t;
 
-    const duracao = app.duration || 30;
+    let ocupados = 0;
 
-    const [ah, am] = app.time.split(":").map(Number);
+    appointments.forEach(app => {
 
-    const inicio =
-      ah * 60 + am;
+      const duracao = app.duration || 30;
 
-    const fim =
-      inicio + duracao;
+      const [ah, am] = app.time.split(":").map(Number);
 
-    const [th, tm] = t.split(":").map(Number);
+      const inicio = ah * 60 + am;
+      const fim = inicio + duracao;
 
-    const atual =
-      th * 60 + tm;
+      const [th, tm] = t.split(":").map(Number);
 
-    if (atual >= inicio && atual < fim) {
-      ocupados++;
-    }
-  });
+      const atual = th * 60 + tm;
 
-  if (ocupados >= capacity) {
+      if (atual >= inicio && atual < fim) {
+        ocupados++;
+      }
 
-    btn.className =
-      "bg-gray-300 p-2 rounded-xl opacity-50";
+    });
 
-    btn.disabled = true;
+    if (ocupados >= capacity) {
 
-  } else {
+      btn.className =
+        "bg-gray-300 p-2 rounded-xl opacity-50";
 
-    btn.className =
-      "bg-pink-100 hover:bg-pink-200 p-2 rounded-xl";
+      btn.disabled = true;
 
-    btn.onclick = () => {
+    } else {
 
-      selectedSlot = t;
+      btn.className =
+        "bg-pink-100 hover:bg-pink-200 p-2 rounded-xl";
 
-      document.querySelectorAll("#times button")
-        .forEach(b =>
-          b.classList.remove(
-            "bg-pink-500",
-            "text-white"
-          )
+      btn.onclick = () => {
+
+        selectedSlot = t;
+
+        document.querySelectorAll("#times button")
+          .forEach(b =>
+            b.classList.remove(
+              "bg-pink-500",
+              "text-white"
+            )
+          );
+
+        btn.classList.add(
+          "bg-pink-500",
+          "text-white"
         );
 
-      btn.classList.add(
-        "bg-pink-500",
-        "text-white"
-      );
-    };
-  }
+      };
+    }
 
-  timesDiv.appendChild(btn);
-});
+    timesDiv.appendChild(btn);
 
-  document.getElementById("date").addEventListener("change", (e) => {
-    selectedSlot = null;
-    render(e.target.value);
   });
 
+}
+
+  document.getElementById("date").addEventListener("change", (e) => {
+  selectedSlot = null;
+  render(e.target.value);
+});
+
+  
   // 🔵 AGENDAR
   window.agendar = async function () {
 
