@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let ownerId = null;
   let slots = [];
   let selectedSlot = null;
+  let selectedDuration = 30;
 
   const timesDiv = document.getElementById("times");
 
@@ -91,12 +92,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   const serviceSelect = document.getElementById("service");
   serviceSelect.innerHTML = "";
 
-  (services || []).forEach(s => {
-    const opt = document.createElement("option");
-    opt.value = `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
-    opt.innerText = `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
-    serviceSelect.appendChild(opt);
-  });
+(services || []).forEach(s => {
+
+  const opt = document.createElement("option");
+
+  opt.value = s.id;
+
+  opt.innerText =
+    `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
+
+  opt.dataset.duration = s.duration || 30;
+  opt.dataset.name = s.name;
+  opt.dataset.price = s.price;
+
+  serviceSelect.appendChild(opt);
+});
+
+  serviceSelect.addEventListener("change", () => {
+
+  const selected =
+    serviceSelect.options[serviceSelect.selectedIndex];
+
+  selectedDuration =
+    parseInt(selected.dataset.duration || 30);
+
+  const date =
+    document.getElementById("date").value;
+
+  if (date) render(date);
+});
 
   // 🔵 PEGAR CONFIG (PROFILE OU GLOBAL FUTURO)
   const slotInterval = profile.slot_interval || 30;
@@ -125,16 +149,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // 🔵 OCUPADOS
-  async function getBusy(date) {
+async function getBusy(date) {
 
-    const { data } = await supabase
-      .from("appointments")
-      .select("time")
-      .eq("date", date)
-      .eq("user_id", ownerId);
+  const { data } = await supabase
+    .from("appointments")
+    .select("*")
+    .eq("date", date)
+    .eq("user_id", ownerId);
 
-    return (data || []).map(d => d.time);
-  }
+  return data || [];
+}
 
   // 🔵 RENDER HORÁRIOS
   async function render(date) {
@@ -143,33 +167,74 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!date) return;
 
-    const busy = await getBusy(date);
+    const appointments = await getBusy(date);
+    const capacity = profile.capacity || 1;
     slots = gerarSlots();
+    
+    //FOREACH (para eu achar rapidinho onde ele ta)
+    
+slots.forEach(t => {
 
-    slots.forEach(t => {
+  const btn = document.createElement("button");
+  btn.innerText = t;
 
-      const btn = document.createElement("button");
-      btn.innerText = t;
+  let ocupados = 0;
 
-      if (busy.includes(t)) {
-        btn.className = "bg-gray-300 p-2 rounded-xl opacity-50";
-        btn.disabled = true;
-      } else {
-        btn.className = "bg-pink-100 hover:bg-pink-200 p-2 rounded-xl";
+  appointments.forEach(app => {
 
-        btn.onclick = () => {
-          selectedSlot = t;
+    const duracao = app.duration || 30;
 
-          document.querySelectorAll("#times button")
-            .forEach(b => b.classList.remove("bg-pink-500","text-white"));
+    const [ah, am] = app.time.split(":").map(Number);
 
-          btn.classList.add("bg-pink-500","text-white");
-        };
-      }
+    const inicio =
+      ah * 60 + am;
 
-      timesDiv.appendChild(btn);
-    });
+    const fim =
+      inicio + duracao;
+
+    const [th, tm] = t.split(":").map(Number);
+
+    const atual =
+      th * 60 + tm;
+
+    if (atual >= inicio && atual < fim) {
+      ocupados++;
+    }
+  });
+
+  if (ocupados >= capacity) {
+
+    btn.className =
+      "bg-gray-300 p-2 rounded-xl opacity-50";
+
+    btn.disabled = true;
+
+  } else {
+
+    btn.className =
+      "bg-pink-100 hover:bg-pink-200 p-2 rounded-xl";
+
+    btn.onclick = () => {
+
+      selectedSlot = t;
+
+      document.querySelectorAll("#times button")
+        .forEach(b =>
+          b.classList.remove(
+            "bg-pink-500",
+            "text-white"
+          )
+        );
+
+      btn.classList.add(
+        "bg-pink-500",
+        "text-white"
+      );
+    };
   }
+
+  timesDiv.appendChild(btn);
+});
 
   document.getElementById("date").addEventListener("change", (e) => {
     selectedSlot = null;
@@ -196,6 +261,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         name,
         phone,
         service,
+        duration: selectedDuration,
         date,
         time: selectedSlot,
         status: "booked"
