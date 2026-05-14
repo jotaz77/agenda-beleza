@@ -11,9 +11,10 @@
 
 <body
   id="body"
-  class="min-h-[100dvh] p-3 sm:p-4 overflow-x-hidden overflow-y-auto bg-black relative"
+  class="min-h-[100dvh] p-3 sm:p-4 overflow-x-hidden relative overflow-y-auto bg-black"
 >
 
+<!-- BACKGROUND -->
 <div
   id="backgroundBlur"
   class="fixed inset-0 bg-cover bg-center scale-110 blur-xl opacity-40"
@@ -21,10 +22,11 @@
 
 <div class="max-w-md mx-auto relative z-10">
 
-  <!-- CARD -->
+  <!-- CARD PRINCIPAL -->
   <div class="bg-white rounded-3xl shadow-xl p-6">
 
-    <img id="preview"
+    <img
+      id="preview"
       src="https://placehold.co/120x120/png"
       class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-pink-200 shadow"
     >
@@ -33,9 +35,7 @@
       Meu Studio
     </h1>
 
-    <div id="publicLink"
-      class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
-    </div>
+    <div id="publicLink" class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm"></div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
 
@@ -48,14 +48,12 @@
         Agendamento Manual
       </button>
 
-      <button id="painelBtn"
-        onclick="window.location.href='painel.html'"
+      <button onclick="window.location.href='painel.html'"
         class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
         Painel
       </button>
 
-      <button id="servicosBtn"
-        onclick="window.location.href='servicos.html'"
+      <button onclick="window.location.href='servicos.html'"
         class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
         Serviços
       </button>
@@ -73,26 +71,23 @@
 
     <h2 class="text-xl font-bold mb-4">Editar Perfil ✨</h2>
 
-    <input id="studio" placeholder="Nome do Studio"
-      class="w-full mb-3 p-3 border rounded-2xl">
+    <input id="studio" placeholder="Nome do Studio" class="w-full mb-3 p-3 border rounded-2xl">
+    <input id="username" placeholder="Seu link" class="w-full mb-3 p-3 border rounded-2xl">
 
-    <input id="username" placeholder="Seu link"
-      class="w-full mb-3 p-3 border rounded-2xl">
+    <label class="text-sm font-semibold">Logo:</label>
+    <input type="file" id="logoFile" class="w-full mb-3" accept="image/*">
 
-    <input type="file" id="logoFile" class="w-full mb-4" accept="image/*">
+    <label class="text-sm font-semibold">Tema:</label>
+    <input type="color" id="themeColor" class="w-full h-12 mb-3 border rounded-2xl">
 
-    <input type="color" id="themeColor"
-      class="w-full h-14 mb-4 rounded-2xl border">
-
-    <input type="file" id="backgroundFile"
-      class="w-full mb-4" accept="image/*">
+    <label class="text-sm font-semibold">Fundo:</label>
+    <input type="file" id="backgroundFile" class="w-full mb-3" accept="image/*">
 
     <button id="salvar" class="w-full text-white p-3 rounded-2xl font-bold">
       Salvar
     </button>
 
     <p id="msg" class="text-center text-sm mt-3"></p>
-
   </div>
 
   <!-- DISPONIBILIDADE -->
@@ -102,20 +97,13 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
 
-      <div>
-        <label class="text-sm text-gray-500">Atendimentos simultâneos</label>
-        <input type="number" id="capacity" min="1" value="1"
-          class="w-full p-3 border rounded-xl">
-      </div>
+      <input type="number" id="capacity" min="1" value="1" class="p-3 border rounded-xl">
 
-      <div>
-        <label class="text-sm text-gray-500">Intervalo</label>
-        <select id="slotInterval" class="w-full p-3 border rounded-xl">
-          <option value="15">15 min</option>
-          <option value="30" selected>30 min</option>
-          <option value="60">1 hora</option>
-        </select>
-      </div>
+      <select id="slotInterval" class="p-3 border rounded-xl">
+        <option value="15">15 min</option>
+        <option value="30">30 min</option>
+        <option value="60">1 hora</option>
+      </select>
 
     </div>
 
@@ -131,6 +119,7 @@
 </div>
 
 <script>
+
 document.addEventListener("DOMContentLoaded", async () => {
 
   const supabase = window.supabase.createClient(
@@ -139,20 +128,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return location.href = "login.html";
+  if (!user) return (window.location.href = "login.html");
 
-  const $ = (id) => document.getElementById(id);
+  const el = (id) => document.getElementById(id);
 
-  const studioInput = $("studio");
-  const usernameInput = $("username");
-  const preview = $("preview");
-  const studioTitle = $("studioTitle");
-  const publicLink = $("publicLink");
-  const editCard = $("editCard");
-  const availabilityList = $("availabilityList");
-  const themeColorInput = $("themeColor");
+  const studioInput = el("studio");
+  const usernameInput = el("username");
+  const preview = el("preview");
+  const studioTitle = el("studioTitle");
+  const publicLink = el("publicLink");
+  const editCard = el("editCard");
+  const availabilityList = el("availabilityList");
+  const backgroundBlur = el("backgroundBlur");
+  const themeColorInput = el("themeColor");
 
-  let profileData = {};
+  let profileData = null;
 
   // ================= PROFILE =================
   const { data: profile } = await supabase
@@ -161,152 +151,150 @@ document.addEventListener("DOMContentLoaded", async () => {
     .eq("id", user.id)
     .maybeSingle();
 
+  if (!profile) {
+    console.warn("Perfil não encontrado");
+  }
+
   profileData = profile || {};
 
-  const theme = profile?.theme_color || "#ec4899";
-
-  const applyTheme = () => {
-    ["copiar", "salvar", "saveSettings"].forEach(id => {
-      const el = $(id);
-      if (el) el.style.background = theme;
-    });
-  };
-
+  // ================= UI PROFILE =================
   if (profile) {
-    applyTheme();
 
     studioInput.value = profile.studio_name || "";
     usernameInput.value = profile.username || "";
-    studioTitle.innerText = profile.studio_name || "Meu Studio";
+    studioTitle.textContent = profile.studio_name || "Meu Studio";
 
     if (profile.logo_url) preview.src = profile.logo_url;
 
-    themeColorInput.value = profile.theme_color || theme;
+    const theme = profile.theme_color || "#ec4899";
+    themeColorInput.value = theme;
 
-    const link = `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
+    if (backgroundBlur) {
+      backgroundBlur.style.backgroundImage = profile.background_url
+        ? `url('${profile.background_url}')`
+        : "none";
+    }
 
-    publicLink.innerHTML = `🔗<br><b>${link}</b>`;
+    const fullLink = `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
 
-    $("copiar").onclick = () => navigator.clipboard.writeText(link);
-    $("abrirAgenda").onclick = () => window.open(link, "_blank");
+    publicLink.innerHTML = fullLink;
+
+    el("copiar").onclick = () => navigator.clipboard.writeText(fullLink);
+    el("abrirAgenda").onclick = () => window.open(fullLink, "_blank");
+
+    ["copiar", "salvar", "saveSettings"].forEach(id => {
+      const b = el(id);
+      if (b) b.style.background = theme;
+    });
   }
 
   // ================= EDIT TOGGLE =================
-  $("editarBtn").onclick = () => editCard.classList.toggle("hidden");
+  el("editarBtn").addEventListener("click", () => {
+    editCard.classList.toggle("hidden");
+  });
 
   // ================= SAVE PROFILE =================
-  $("salvar").onclick = async () => {
+  el("salvar").onclick = async () => {
+
+    const msg = el("msg");
+    msg.textContent = "Salvando...";
+
+    let logo_url = profileData?.logo_url || null;
+    let background_url = profileData?.background_url || null;
+
+    const logoFile = el("logoFile")?.files?.[0];
+    const backgroundFile = el("backgroundFile")?.files?.[0];
 
     const studio_name = studioInput.value;
     const username = usernameInput.value;
     const theme_color = themeColorInput.value;
 
-    const logoFile = $("logoFile").files[0];
-    const backgroundFile = $("backgroundFile").files[0];
+    try {
 
-    let logo_url = profileData.logo_url || null;
-    let background_url = profileData.background_url || null;
+      if (logoFile) {
+        const path = `logos/${user.id}-${Date.now()}`;
+        await supabase.storage.from("logos").upload(path, logoFile, { upsert: true });
+        logo_url = supabase.storage.from("logos").getPublicUrl(path).data.publicUrl;
+      }
 
-    const msg = $("msg");
-    msg.innerText = "Salvando...";
+      if (backgroundFile) {
+        const path = `backgrounds/${user.id}-${Date.now()}`;
+        await supabase.storage.from("backgrounds").upload(path, backgroundFile, { upsert: true });
+        background_url = supabase.storage.from("backgrounds").getPublicUrl(path).data.publicUrl;
+      }
 
-    // LOGO
-    if (logoFile) {
-      const path = `logos/${user.id}-${Date.now()}`;
-      await supabase.storage.from("logos").upload(path, logoFile);
-      logo_url = supabase.storage.from("logos").getPublicUrl(path).data.publicUrl;
-    }
-
-    // BACKGROUND
-    if (backgroundFile) {
-      const path = `backgrounds/${user.id}-${Date.now()}`;
-      await supabase.storage.from("backgrounds").upload(path, backgroundFile);
-      background_url = supabase.storage.from("backgrounds").getPublicUrl(path).data.publicUrl;
-    }
-
-    const { error } = await supabase
-      .from("profiles")
-      .update({
+      await supabase.from("profiles").update({
         studio_name,
         username,
         logo_url,
-        theme_color,
-        background_url
-      })
-      .eq("id", user.id);
+        background_url,
+        theme_color
+      }).eq("id", user.id);
 
-    if (error) {
-      msg.innerText = "Erro ao salvar";
-      return;
+      msg.textContent = "Salvo com sucesso!";
+
+    } catch (err) {
+      console.error(err);
+      msg.textContent = "Erro ao salvar";
     }
-
-    msg.innerText = "Salvo com sucesso!";
   };
 
   // ================= SETTINGS =================
-  $("saveSettings").onclick = async () => {
+  const { data: config } = await supabase
+    .from("profiles")
+    .select("capacity, slot_interval")
+    .eq("id", user.id)
+    .maybeSingle();
 
-    const capacity = parseInt($("capacity").value);
-    const slot_interval = parseInt($("slotInterval").value);
+  if (config) {
+    el("capacity").value = config.capacity || 1;
+    el("slotInterval").value = config.slot_interval || 30;
+  }
 
-    await supabase
-      .from("profiles")
-      .update({ capacity, slot_interval })
-      .eq("id", user.id);
+  el("saveSettings").onclick = async () => {
 
-    const requests = [];
+    await supabase.from("profiles").update({
+      capacity: parseInt(el("capacity").value),
+      slot_interval: parseInt(el("slotInterval").value)
+    }).eq("id", user.id);
 
-    for (let i = 0; i < 7; i++) {
-      requests.push(
-        supabase.from("availability").upsert({
-          user_id: user.id,
-          weekday: i,
-          start_time: $(`start-${i}`)?.value || "09:00",
-          end_time: $(`end-${i}`)?.value || "18:00",
-          active: $(`active-${i}`)?.checked ?? true
-        })
-      );
-    }
-
-    await Promise.all(requests);
-
-    alert("Salvo!");
+    alert("Configurações salvas!");
   };
 
   // ================= AVAILABILITY =================
   const dias = ["Dom","Seg","Ter","Qua","Qui","Sex","Sab"];
 
-  const { data } = await supabase
-    .from("availability")
-    .select("*")
-    .eq("user_id", user.id);
+  async function loadAvailability() {
 
-  const rows = data || [];
+    availabilityList.innerHTML = "";
 
-  for (let i = 0; i < 7; i++) {
+    const { data } = await supabase
+      .from("availability")
+      .select("*")
+      .eq("user_id", user.id);
 
-    const d = rows.find(r => r.weekday === i);
+    for (let i = 0; i < 7; i++) {
 
-    const div = document.createElement("div");
-    div.className = "border p-4 rounded-2xl";
+      const d = data?.find(x => x.weekday === i);
 
-    div.innerHTML = `
-      <div class="flex justify-between mb-2">
+      const div = document.createElement("div");
+      div.className = "border p-3 rounded-2xl";
+
+      div.innerHTML = `
         <b>${dias[i]}</b>
-        <input type="checkbox" id="active-${i}" ${d?.active !== false ? "checked" : ""}>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
         <input type="time" id="start-${i}" value="${d?.start_time || "09:00"}">
         <input type="time" id="end-${i}" value="${d?.end_time || "18:00"}">
-      </div>
-    `;
+      `;
 
-    availabilityList.appendChild(div);
+      availabilityList.appendChild(div);
+    }
   }
 
+  loadAvailability();
+
 });
+
 </script>
 
 </body>
-</html>
+</html>>
