@@ -180,32 +180,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     const fullLink =
       `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${safeUsername}`;
-
+    
+    // link clicável
     publicLink.innerHTML = `
       <a href="${fullLink}" target="_blank" class="text-pink-600 break-all font-semibold">
         ${fullLink}
       </a>
     `;
-
+    
+    // copiar robusto
     el("copiar").onclick = async () => {
-  try {
-    await navigator.clipboard.writeText(fullLink);
-    el("copiar").textContent = "Copiado!";
-    setTimeout(() => (el("copiar").textContent = "Copiar Link"), 1200);
-  } catch (err) {
-    console.error(err);
-
-    // fallback (funciona até em browser chato)
-    const temp = document.createElement("input");
-    document.body.appendChild(temp);
-    temp.value = fullLink;
-    temp.select();
-    document.execCommand("copy");
-    document.body.removeChild(temp);
-
-    alert("Link copiado!");
-  }
-};
+      try {
+        await navigator.clipboard.writeText(fullLink);
+        el("copiar").textContent = "Copiado!";
+        setTimeout(() => (el("copiar").textContent = "Copiar Link"), 1200);
+      } catch (err) {
+        const temp = document.createElement("input");
+        document.body.appendChild(temp);
+        temp.value = fullLink;
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        alert("Link copiado!");
+      }
+    };
+    
+    // abrir agenda
     el("abrirAgenda").onclick = () => window.open(fullLink, "_blank");
 
     ["copiar", "salvar", "saveSettings"].forEach(id => {
