@@ -35,8 +35,8 @@
 
       <div class="grid grid-cols-2 gap-3 mt-5">
 
-        <button id="copiar"
-          class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-2xl font-bold">
+      <button id="copiar"
+        class="text-white p-3 rounded-2xl font-bold">
           Copiar Link
         </button>
 
@@ -98,7 +98,7 @@
       >
 
       <button id="salvar"
-        class="w-full bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-2xl font-bold">
+        class="w-full text-white p-3 rounded-2xl font-bold">
         Salvar
       </button>
 
@@ -186,6 +186,17 @@ const backgroundFileInput =
 
   if (profile) {
 
+    // 🎨 APLICAR COR
+const theme =
+  profile.theme_color || "#ec4899";
+
+document
+  .getElementById("copiar")
+  .style.background = theme;
+
+document
+  .getElementById("salvar")
+  .style.background = theme;
     studioInput.value = profile.studio_name || "";
     usernameInput.value = profile.username || "";
     studioTitle.innerText = profile.studio_name || "Meu Studio";
