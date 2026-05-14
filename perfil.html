@@ -17,13 +17,26 @@
   class="
     min-h-screen
     p-4
-    bg-cover
-    bg-center
-    bg-no-repeat
+    relative
+    overflow-hidden
+    bg-black
   "
 >
+<!-- BACKGROUND PREMIUM -->
+<div
+  id="backgroundBlur"
+  class="
+    absolute
+    inset-0
+    bg-cover
+    bg-center
+    scale-110
+    blur-x1
+    opacity-40
+  "
+></div>
 
-  <div class="max-w-md mx-auto">
+  <div class="max-w-md mx-auto relative z-10">
 
     <!-- CARD PRINCIPAL -->
     <div class="bg-white rounded-3xl shadow-xl p-6">
@@ -178,6 +191,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const availabilityList = document.getElementById("availabilityList");
   const body =
   document.getElementById("body");
+  const backgroundBlur =
+  document.getElementById("backgroundBlur");
   const themeColorInput =
   document.getElementById("themeColor");
 
@@ -200,14 +215,8 @@ const backgroundFileInput =
     // 🎨 APLICAR BACKGROUND
 if (profile.background_url) {
 
-  body.style.backgroundImage =
-    `
-    linear-gradient(
-      rgba(255,255,255,0.82),
-      rgba(255,255,255,0.82)
-    ),
-    url('${profile.background_url}')
-    `;
+  backgroundBlur.style.backgroundImage =
+    `url('${profile.background_url}')`;
 }
     // 🎨 APLICAR COR
 const theme =
