@@ -226,17 +226,6 @@ const backgroundFileInput =
   document.getElementById("backgroundFile");
 
   let profileData = null;
-
-  // ================= PERFIL =================
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  profileData = profile;
-
-  if (profile) {
 // ================= BACKGROUND =================
 if (backgroundBlur) {
   if (profile.background_url) {
