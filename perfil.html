@@ -232,7 +232,7 @@ const backgroundFileInput =
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   profileData = profile;
 
