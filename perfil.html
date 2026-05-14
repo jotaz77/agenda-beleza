@@ -181,7 +181,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const fullLink =
       `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${safeUsername}`;
 
-    publicLink.innerHTML = fullLink;
+    publicLink.innerHTML = `
+      <a href="${fullLink}" target="_blank" class="text-pink-600 break-all font-semibold">
+        ${fullLink}
+      </a>
+    `;
 
     el("copiar").onclick = async () => {
   try {
