@@ -194,6 +194,12 @@ const backgroundFileInput =
       preview.src = profile.logo_url;
     }
 
+    if (profile.theme_color) {
+
+  themeColorInput.value =
+    profile.theme_color;
+    }
+    
     const fullLink =
       `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
 
