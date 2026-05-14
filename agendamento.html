@@ -248,8 +248,17 @@ async function render(date) {
     const name = document.getElementById("name").value;
     const phone = document.getElementById("phone").value;
     const date = document.getElementById("date").value;
-    const service = document.getElementById("service").value;
+    const serviceSelect =
+  document.getElementById("service");
 
+const selectedService =
+  serviceSelect.options[
+    serviceSelect.selectedIndex
+  ];
+
+const service =
+  selectedService.dataset.name;
+    
     if (!name || !phone || !date || !selectedSlot) {
       alert("Preencha tudo!");
       return;
