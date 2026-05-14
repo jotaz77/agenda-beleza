@@ -12,7 +12,16 @@
 
 </head>
 
-<body class="bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300 min-h-screen p-4">
+<body
+  id="body"
+  class="
+    min-h-screen
+    p-4
+    bg-cover
+    bg-center
+    bg-no-repeat
+  "
+>
 
   <div class="max-w-md mx-auto">
 
@@ -167,6 +176,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const publicLink = document.getElementById("publicLink");
   const editCard = document.getElementById("editCard");
   const availabilityList = document.getElementById("availabilityList");
+  const body =
+  document.getElementById("body");
   const themeColorInput =
   document.getElementById("themeColor");
 
@@ -186,6 +197,18 @@ const backgroundFileInput =
 
   if (profile) {
 
+    // 🎨 APLICAR BACKGROUND
+if (profile.background_url) {
+
+  body.style.backgroundImage =
+    `
+    linear-gradient(
+      rgba(255,255,255,0.82),
+      rgba(255,255,255,0.82)
+    ),
+    url('${profile.background_url}')
+    `;
+}
     // 🎨 APLICAR COR
 const theme =
   profile.theme_color || "#ec4899";
