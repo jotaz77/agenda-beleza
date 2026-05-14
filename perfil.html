@@ -221,7 +221,13 @@ const backgroundFileInput =
   profileData = profile;
 
   if (profile) {
-
+// ================= BACKGROUND =================
+if (profile.background_url && backgroundBlur) {
+  backgroundBlur.style.backgroundImage =
+    `url('${profile.background_url}')`;
+  backgroundBlur.style.backgroundSize = "cover";
+  backgroundBlur.style.backgroundPosition = "center";
+}
 // 🎨 APLICAR COR
 const theme =
   profile.theme_color || "#ec4899";
