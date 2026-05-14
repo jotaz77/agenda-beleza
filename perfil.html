@@ -193,36 +193,104 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // ================= SALVAR PERFIL =================
-  document.getElementById("salvar").onclick = async () => {
+document.getElementById("salvar").onclick = async () => {
 
-    const studio_name = studioInput.value;
-    const username = usernameInput.value;
-    const msg = document.getElementById("msg");
+  const studio_name = studioInput.value;
+  const username = usernameInput.value;
 
-    msg.innerText = "Salvando...";
+  const logoFile =
+    document.getElementById("logoFile").files[0];
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        studio_name,
-        username
-      })
-      .eq("id", user.id);
+  const msg =
+    document.getElementById("msg");
 
-    if (error) {
-      msg.innerText = "Erro ao salvar";
+  msg.innerText = "Salvando...";
+
+  let logo_url =
+    profileData?.logo_url || null;
+
+  // 🔥 UPLOAD FOTO
+  if (logoFile) {
+
+    const fileExt =
+      logoFile.name.split(".").pop();
+
+    const fileName =
+      `${user.id}-${Date.now()}.${fileExt}`;
+
+    const filePath =
+      `logos/${fileName}`;
+
+    const { error: uploadError } =
+      await supabase.storage
+        .from("logos")
+        .upload(filePath, logoFile, {
+          upsert: true
+        });
+
+    if (uploadError) {
+
+      console.log(uploadError);
+
+      msg.innerText =
+        "Erro upload imagem";
+
       return;
     }
 
-    msg.innerText = "Salvo com sucesso!";
-  };
+    const {
+      data: publicUrlData
+    } = supabase.storage
+      .from("logos")
+      .getPublicUrl(filePath);
 
-  // ================= LOGOUT =================
-  document.getElementById("logout").onclick = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "login.html";
-  };
+    logo_url =
+      publicUrlData.publicUrl;
+  }
 
+  // 🔥 UPDATE PROFILE
+  const { error } =
+    await supabase
+      .from("profiles")
+      .update({
+        studio_name,
+        username,
+        logo_url
+      })
+      .eq("id", user.id);
+
+  if (error) {
+
+    console.log(error);
+
+    msg.innerText =
+      "Erro ao salvar";
+
+    return;
+  }
+
+  // 🔥 ATUALIZA UI
+  studioTitle.innerText =
+    studio_name;
+
+  if (logo_url) {
+    preview.src =
+      logo_url + "?t=" + Date.now();
+  }
+
+  const fullLink =
+    `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${username}`;
+
+  publicLink.innerHTML = `
+    🔗<br>
+    <span class="font-bold text-pink-600 break-all">
+      ${fullLink}
+    </span>
+  `;
+
+  msg.innerText =
+    "Salvo com sucesso!";
+};
   // ================= CONFIG =================
   const { data: config } = await supabase
     .from("profiles")
