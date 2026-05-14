@@ -180,7 +180,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     publicLink.innerHTML = fullLink;
 
-    el("copiar").onclick = () => navigator.clipboard.writeText(fullLink);
+    el("copiar").onclick = async () => {
+  try {
+    await navigator.clipboard.writeText(fullLink);
+    el("copiar").textContent = "Copiado!";
+    setTimeout(() => (el("copiar").textContent = "Copiar Link"), 1200);
+  } catch (err) {
+    console.error(err);
+
+    // fallback (funciona até em browser chato)
+    const temp = document.createElement("input");
+    document.body.appendChild(temp);
+    temp.value = fullLink;
+    temp.select();
+    document.execCommand("copy");
+    document.body.removeChild(temp);
+
+    alert("Link copiado!");
+  }
+};
     el("abrirAgenda").onclick = () => window.open(fullLink, "_blank");
 
     ["copiar", "salvar", "saveSettings"].forEach(id => {
