@@ -1,434 +1,230 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Meu Studio</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 </head>
 
 <body
   id="body"
-  class="
-    min-h-[100dvh]
-    p-3
-    sm:p-4
-    overflow-x-hidden
-    relative
-    overflow-x-hidden
-    overflow-y-auto
-    bg-black
-  "
+  class="min-h-[100dvh] p-3 sm:p-4 overflow-x-hidden overflow-y-auto bg-black relative"
 >
-<!-- BACKGROUND PREMIUM -->
+
 <div
   id="backgroundBlur"
-  class="
-    fixed
-    inset-0
-    bg-cover
-    bg-center
-    scale-110
-    blur-xl
-    opacity-40
-  "
+  class="fixed inset-0 bg-cover bg-center scale-110 blur-xl opacity-40"
 ></div>
 
+<div class="max-w-md mx-auto relative z-10">
 
-  <div class="max-w-md mx-auto relative z-10">
+  <!-- CARD -->
+  <div class="bg-white rounded-3xl shadow-xl p-6">
 
-    <!-- CARD PRINCIPAL -->
-    <div class="bg-white rounded-3xl shadow-xl p-6">
+    <img id="preview"
+      src="https://placehold.co/120x120/png"
+      class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-pink-200 shadow"
+    >
 
-      <img id="preview"
-        src="https://placehold.co/120x120/png"
-        class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-pink-200 shadow"
-      >
+    <h1 id="studioTitle" class="text-2xl font-bold text-center mt-4 text-gray-800">
+      Meu Studio
+    </h1>
 
-      <h1 id="studioTitle"
-        class="text-2xl font-bold text-center mt-4 text-gray-800">
-        Meu Studio
-      </h1>
-
-      <div id="publicLink"
-        class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
-
-      <button id="copiar"
-        class="text-white p-3 rounded-2xl font-bold">
-          Copiar Link
-        </button>
-
-        <button id="abrirAgenda"
-          class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
-          Agendamento Manual
-        </button>
-
-        <button
-          id="painelBtn"
-          onclick="window.location.href='painel.html'"
-          class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
-          Painel
-        </button>
-
-        <button
-          id="servicosBtn"
-          onclick="window.location.href='servicos.html'"
-          class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
-          Serviços
-        </button>
-
-        <button id="editarBtn"
-          class="col-span-2 bg-gray-100 text-gray-700 p-3 rounded-2xl font-bold hover:bg-gray-200">
-          Editar Perfil
-        </button>
-
-      </div>
-
+    <div id="publicLink"
+      class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
     </div>
 
-    <!-- EDIT -->
-    <div id="editCard" class="bg-white rounded-3xl shadow-xl p-6 mt-5 hidden">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
 
-      <h2 class="text-xl font-bold mb-4">Editar Perfil ✨</h2>
-
-      <input id="studio" placeholder="Nome do Studio"
-        class="w-full mb-3 p-3 border rounded-2xl">
-
-      <input id="username" placeholder="Seu link"
-        class="w-full mb-3 p-3 border rounded-2xl">
-      <label class="block text-sm font-semibold mb-2">
-        Selecione sua logo (opcional):
-      </label>
-      <input type="file" id="logoFile" class="w-full mb-4" accept="image/*">
-      <label class="block text-sm font-semibold mb-2">
-        Escolha a cor do tema:
-      </label>
-      
-      <input
-        type="color"
-        id="themeColor"
-        class="w-full h-14 mb-4 rounded-2xl border"
-      >
-      
-      <label class="block text-sm font-semibold mb-2">
-        Foto de fundo (opcional):
-      </label>
-      
-      <input
-        type="file"
-        id="backgroundFile"
-        class="w-full mb-4"
-        accept="image/*"
-      >
-
-      <button id="salvar"
-        class="w-full text-white p-3 rounded-2xl font-bold">
-        Salvar
+      <button id="copiar" class="text-white p-3 rounded-2xl font-bold">
+        Copiar Link
       </button>
 
-      <button id="logout"
-        class="w-full mt-3 bg-gray-100 p-3 rounded-2xl">
-        Sair
+      <button id="abrirAgenda"
+        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
+        Agendamento Manual
       </button>
 
-      <p id="msg" class="text-center text-sm mt-3"></p>
+      <button id="painelBtn"
+        onclick="window.location.href='painel.html'"
+        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
+        Painel
+      </button>
+
+      <button id="servicosBtn"
+        onclick="window.location.href='servicos.html'"
+        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
+        Serviços
+      </button>
+
+      <button id="editarBtn"
+        class="col-span-2 bg-gray-100 text-gray-700 p-3 rounded-2xl font-bold hover:bg-gray-200">
+        Editar Perfil
+      </button>
 
     </div>
+  </div>
 
-    <!-- DISPONIBILIDADE -->
-    <div class="bg-white rounded-3xl shadow-xl p-6 mt-5">
+  <!-- EDIT -->
+  <div id="editCard" class="bg-white rounded-3xl shadow-xl p-6 mt-5 hidden">
 
-      <h2 class="text-xl font-bold mb-5">
-        Disponibilidade 📅
-      </h2>
+    <h2 class="text-xl font-bold mb-4">Editar Perfil ✨</h2>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+    <input id="studio" placeholder="Nome do Studio"
+      class="w-full mb-3 p-3 border rounded-2xl">
 
-        <div>
-          <label class="text-sm text-gray-500">Atendimentos simultâneos</label>
-          <input type="number" id="capacity" min="1" value="1"
-            class="w-full p-3 border rounded-xl">
-        </div>
+    <input id="username" placeholder="Seu link"
+      class="w-full mb-3 p-3 border rounded-2xl">
 
-        <div>
-          <label class="text-sm text-gray-500">Intervalo dos horários</label>
-          <select id="slotInterval" class="w-full p-3 border rounded-xl">
-            <option value="15">15 min</option>
-            <option value="30" selected>30 min</option>
-            <option value="60">1 hora</option>
-          </select>
-        </div>
+    <input type="file" id="logoFile" class="w-full mb-4" accept="image/*">
 
-      </div>
+    <input type="color" id="themeColor"
+      class="w-full h-14 mb-4 rounded-2xl border">
 
-      <button id="saveSettings"
-        class="w-full mb-6 bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-2xl font-bold">
-        Salvar Configurações Gerais
-      </button>
+    <input type="file" id="backgroundFile"
+      class="w-full mb-4" accept="image/*">
 
-      <div id="availabilityList" class="space-y-4"></div>
+    <button id="salvar" class="w-full text-white p-3 rounded-2xl font-bold">
+      Salvar
+    </button>
 
-    </div>
+    <p id="msg" class="text-center text-sm mt-3"></p>
 
   </div>
 
-<script>
+  <!-- DISPONIBILIDADE -->
+  <div class="bg-white rounded-3xl shadow-xl p-6 mt-5">
 
+    <h2 class="text-xl font-bold mb-5">Disponibilidade 📅</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+
+      <div>
+        <label class="text-sm text-gray-500">Atendimentos simultâneos</label>
+        <input type="number" id="capacity" min="1" value="1"
+          class="w-full p-3 border rounded-xl">
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-500">Intervalo</label>
+        <select id="slotInterval" class="w-full p-3 border rounded-xl">
+          <option value="15">15 min</option>
+          <option value="30" selected>30 min</option>
+          <option value="60">1 hora</option>
+        </select>
+      </div>
+
+    </div>
+
+    <button id="saveSettings"
+      class="w-full mb-6 bg-purple-500 text-white p-3 rounded-2xl font-bold">
+      Salvar Configurações
+    </button>
+
+    <div id="availabilityList" class="space-y-4"></div>
+
+  </div>
+
+</div>
+
+<script>
 document.addEventListener("DOMContentLoaded", async () => {
 
   const supabase = window.supabase.createClient(
     "https://bjaurtrqrasznuptthyf.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqYXVydHJxcmFzem51cHR0aHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDkwNTIsImV4cCI6MjA5MzQ4NTA1Mn0.iCQyvzAJykzgLO4kZkJZ8qNbv3549rG_JuwcVEZDrKA"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return window.location.href = "login.html";
+  if (!user) return location.href = "login.html";
 
-  const studioInput = document.getElementById("studio");
-  const usernameInput = document.getElementById("username");
-  const preview = document.getElementById("preview");
-  const studioTitle = document.getElementById("studioTitle");
-  const publicLink = document.getElementById("publicLink");
-  const editCard = document.getElementById("editCard");
-  const availabilityList = document.getElementById("availabilityList");
-  const body =
-  document.getElementById("body");
-  const backgroundBlur =
-  document.getElementById("backgroundBlur");
-  const themeColorInput =
-  document.getElementById("themeColor");
+  const $ = (id) => document.getElementById(id);
 
-const backgroundFileInput =
-  document.getElementById("backgroundFile");
+  const studioInput = $("studio");
+  const usernameInput = $("username");
+  const preview = $("preview");
+  const studioTitle = $("studioTitle");
+  const publicLink = $("publicLink");
+  const editCard = $("editCard");
+  const availabilityList = $("availabilityList");
+  const themeColorInput = $("themeColor");
 
-  let profileData = null;
+  let profileData = {};
 
-  // ================= PERFIL =================
+  // ================= PROFILE =================
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
-  profileData = profile;
+  profileData = profile || {};
+
+  const theme = profile?.theme_color || "#ec4899";
+
+  const applyTheme = () => {
+    ["copiar", "salvar", "saveSettings"].forEach(id => {
+      const el = $(id);
+      if (el) el.style.background = theme;
+    });
+  };
 
   if (profile) {
-// ================= BACKGROUND =================
-if (backgroundBlur) {
-  if (profile.background_url) {
-    backgroundBlur.style.backgroundImage =
-      `url('${profile.background_url}')`;
-    backgroundBlur.style.backgroundSize = "cover";
-    backgroundBlur.style.backgroundPosition = "center";
-  } else {
-    backgroundBlur.style.backgroundImage = "none";
-    backgroundBlur.style.backgroundColor = "#F5F5DC"; //cor do fundo quando não há imagem
-  }
-}
-// 🎨 APLICAR COR
-const theme =
-  profile.theme_color || "#ec4899";
+    applyTheme();
 
-// BOTÕES PRINCIPAIS
-[
-  "copiar",
-  "salvar",
-  "saveSettings"
-].forEach(id => {
-
-  const btn =
-    document.getElementById(id);
-
-  if (btn) {
-    btn.style.background = theme;
-  }
-});
-
-// BOTÕES COM BORDA
-[
-  "abrirAgenda",
-  "painelBtn",
-  "servicosBtn",
-  "editarBtn"
-].forEach(id => {
-
-  const btn =
-    document.getElementById(id);
-
-  if (btn) {
-
-    btn.style.border =
-      `1px solid ${theme}`;
-
-    btn.style.color =
-      theme;
-  }
-});
-
-// LINK
-publicLink.style.border =
-  `1px solid ${theme}`;
-
-publicLink.style.background =
-  `${theme}15`;
-
-publicLink.style.color =
-  theme;
     studioInput.value = profile.studio_name || "";
     usernameInput.value = profile.username || "";
     studioTitle.innerText = profile.studio_name || "Meu Studio";
 
-    if (profile.logo_url) {
-      preview.src = profile.logo_url;
-    }
+    if (profile.logo_url) preview.src = profile.logo_url;
 
-    if (profile.theme_color) {
+    themeColorInput.value = profile.theme_color || theme;
 
-  themeColorInput.value =
-    profile.theme_color;
-    }
-    
-    const fullLink =
-      `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
+    const link = `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${profile.username}`;
 
-    publicLink.innerHTML = `
-      🔗<br>
-      <span class="font-bold text-pink-600 break-all">${fullLink}</span>
-    `;
+    publicLink.innerHTML = `🔗<br><b>${link}</b>`;
 
-    document.getElementById("copiar").onclick = async () => {
-      await navigator.clipboard.writeText(fullLink);
-      alert("Link copiado!");
-    };
-
-    document.getElementById("abrirAgenda").onclick = () => {
-      window.open(fullLink, "_blank");
-    };
+    $("copiar").onclick = () => navigator.clipboard.writeText(link);
+    $("abrirAgenda").onclick = () => window.open(link, "_blank");
   }
 
-  // abrir/fechar edição
-  document.getElementById("editarBtn")?.addEventListener("click", () => {
-    editCard.classList.toggle("hidden");
-  });
+  // ================= EDIT TOGGLE =================
+  $("editarBtn").onclick = () => editCard.classList.toggle("hidden");
 
-  // ================= SALVAR PERFIL =================
-document.getElementById("salvar").onclick = async () => {
+  // ================= SAVE PROFILE =================
+  $("salvar").onclick = async () => {
 
-  const studio_name = studioInput.value;
-  const username = usernameInput.value;
+    const studio_name = studioInput.value;
+    const username = usernameInput.value;
+    const theme_color = themeColorInput.value;
 
-  const logoFile =
-    document.getElementById("logoFile").files[0];
+    const logoFile = $("logoFile").files[0];
+    const backgroundFile = $("backgroundFile").files[0];
 
-  const backgroundFile =
-  backgroundFileInput.files[0];
+    let logo_url = profileData.logo_url || null;
+    let background_url = profileData.background_url || null;
 
-const theme_color =
-  themeColorInput.value;
+    const msg = $("msg");
+    msg.innerText = "Salvando...";
 
-  const msg =
-    document.getElementById("msg");
-
-  msg.innerText = "Salvando...";
-
-  let logo_url =
-    profileData?.logo_url || null;
-
-  let background_url =
-  profileData?.background_url || null;
-
-  // 🔥 UPLOAD FOTO
-  if (logoFile) {
-
-    const fileExt =
-      logoFile.name.split(".").pop();
-
-    const fileName =
-      `${user.id}-${Date.now()}.${fileExt}`;
-
-    const filePath =
-      `logos/${fileName}`;
-
-    const { error: uploadError } =
-      await supabase.storage
-        .from("logos")
-        .upload(filePath, logoFile, {
-          upsert: true
-        });
-
-    if (uploadError) {
-
-      console.log(uploadError);
-
-      msg.innerText =
-        "Erro upload imagem";
-
-      return;
+    // LOGO
+    if (logoFile) {
+      const path = `logos/${user.id}-${Date.now()}`;
+      await supabase.storage.from("logos").upload(path, logoFile);
+      logo_url = supabase.storage.from("logos").getPublicUrl(path).data.publicUrl;
     }
 
-    const {
-      data: publicUrlData
-    } = supabase.storage
-      .from("logos")
-      .getPublicUrl(filePath);
+    // BACKGROUND
+    if (backgroundFile) {
+      const path = `backgrounds/${user.id}-${Date.now()}`;
+      await supabase.storage.from("backgrounds").upload(path, backgroundFile);
+      background_url = supabase.storage.from("backgrounds").getPublicUrl(path).data.publicUrl;
+    }
 
-    logo_url =
-      publicUrlData.publicUrl;
-  }
-
-  // 🔥 UPLOAD BACKGROUND
-if (backgroundFile) {
-
-  const fileExt =
-    backgroundFile.name
-      .split(".")
-      .pop();
-
-  const fileName =
-    `bg-${user.id}-${Date.now()}.${fileExt}`;
-
-  const filePath =
-    `backgrounds/${fileName}`;
-
-  const {
-    error: bgError
-  } = await supabase.storage
-    .from("backgrounds")
-    .upload(filePath, backgroundFile, {
-      upsert: true
-    });
-
-  if (bgError) {
-
-    console.log(bgError);
-
-    msg.innerText =
-      "Erro upload fundo";
-
-    return;
-  }
-
-  const {
-    data: bgPublic
-  } = supabase.storage
-    .from("backgrounds")
-    .getPublicUrl(filePath);
-
-  background_url =
-    bgPublic.publicUrl;
-}
-  
-  // 🔥 UPDATE PROFILE
-  const { error } =
-    await supabase
+    const { error } = await supabase
       .from("profiles")
       .update({
         studio_name,
@@ -437,122 +233,79 @@ if (backgroundFile) {
         theme_color,
         background_url
       })
-    
       .eq("id", user.id);
 
-  if (error) {
+    if (error) {
+      msg.innerText = "Erro ao salvar";
+      return;
+    }
 
-    console.log(error);
+    msg.innerText = "Salvo com sucesso!";
+  };
 
-    msg.innerText =
-      "Erro ao salvar";
+  // ================= SETTINGS =================
+  $("saveSettings").onclick = async () => {
 
-    return;
-  }
-
-  // 🔥 ATUALIZA UI
-  studioTitle.innerText =
-    studio_name;
-
-  if (logo_url) {
-    preview.src =
-      logo_url + "?t=" + Date.now();
-  }
-
-  const fullLink =
-    `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${username}`;
-
-  publicLink.innerHTML = `
-    🔗<br>
-    <span class="font-bold text-pink-600 break-all">
-      ${fullLink}
-    </span>
-  `;
-
-  msg.innerText =
-    "Salvo com sucesso!";
-};
-  // ================= CONFIG =================
-  const { data: config } = await supabase
-    .from("profiles")
-    .select("capacity, slot_interval")
-    .eq("id", user.id)
-    .single();
-
-  if (config) {
-    document.getElementById("capacity").value = config.capacity || 1;
-    document.getElementById("slotInterval").value = config.slot_interval || 30;
-  }
-
-  document.getElementById("saveSettings").onclick = async () => {
-
-    const capacity = parseInt(document.getElementById("capacity").value);
-    const slot_interval = parseInt(document.getElementById("slotInterval").value);
+    const capacity = parseInt($("capacity").value);
+    const slot_interval = parseInt($("slotInterval").value);
 
     await supabase
       .from("profiles")
       .update({ capacity, slot_interval })
       .eq("id", user.id);
 
+    const requests = [];
+
     for (let i = 0; i < 7; i++) {
-
-      const start = document.getElementById(`start-${i}`)?.value || "09:00";
-      const end = document.getElementById(`end-${i}`)?.value || "18:00";
-      const active = document.getElementById(`active-${i}`)?.checked ?? true;
-
-      await supabase.from("availability").upsert({
-        user_id: user.id,
-        weekday: i,
-        start_time: start,
-        end_time: end,
-        active
-      });
+      requests.push(
+        supabase.from("availability").upsert({
+          user_id: user.id,
+          weekday: i,
+          start_time: $(`start-${i}`)?.value || "09:00",
+          end_time: $(`end-${i}`)?.value || "18:00",
+          active: $(`active-${i}`)?.checked ?? true
+        })
+      );
     }
 
-    alert("Configurações salvas!");
+    await Promise.all(requests);
+
+    alert("Salvo!");
   };
 
-  // ================= DISPONIBILIDADE =================
+  // ================= AVAILABILITY =================
   const dias = ["Dom","Seg","Ter","Qua","Qui","Sex","Sab"];
 
-  async function carregarDisponibilidade() {
+  const { data } = await supabase
+    .from("availability")
+    .select("*")
+    .eq("user_id", user.id);
 
-    availabilityList.innerHTML = "";
+  const rows = data || [];
 
-    const { data: raw } = await supabase
-      .from("availability")
-      .select("*")
-      .eq("user_id", user.id);
+  for (let i = 0; i < 7; i++) {
 
-    const data = raw || [];
+    const d = rows.find(r => r.weekday === i);
 
-    for (let i = 0; i < 7; i++) {
+    const div = document.createElement("div");
+    div.className = "border p-4 rounded-2xl";
 
-      const dia = data.find(d => d.weekday === i);
+    div.innerHTML = `
+      <div class="flex justify-between mb-2">
+        <b>${dias[i]}</b>
+        <input type="checkbox" id="active-${i}" ${d?.active !== false ? "checked" : ""}>
+      </div>
 
-      const div = document.createElement("div");
-      div.className = "border p-4 rounded-2xl";
+      <div class="grid grid-cols-2 gap-2">
+        <input type="time" id="start-${i}" value="${d?.start_time || "09:00"}">
+        <input type="time" id="end-${i}" value="${d?.end_time || "18:00"}">
+      </div>
+    `;
 
-      div.innerHTML = `
-        <div class="flex justify-between mb-2">
-          <b>${dias[i]}</b>
-          <input type="checkbox" id="active-${i}" ${dia?.active !== false ? "checked" : ""}>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <input type="time" id="start-${i}" value="${dia?.start_time || "09:00"}">
-          <input type="time" id="end-${i}" value="${dia?.end_time || "18:00"}">
-        </div>
-      `;
-
-      availabilityList.appendChild(div);
-    }
+    availabilityList.appendChild(div);
   }
 
-  carregarDisponibilidade();
-
 });
-
 </script>
 
 </body>
