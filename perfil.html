@@ -232,6 +232,12 @@ document.getElementById("salvar").onclick = async () => {
   const logoFile =
     document.getElementById("logoFile").files[0];
 
+  const backgroundFile =
+  backgroundFileInput.files[0];
+
+const theme_color =
+  themeColorInput.value;
+
   const msg =
     document.getElementById("msg");
 
@@ -239,6 +245,9 @@ document.getElementById("salvar").onclick = async () => {
 
   let logo_url =
     profileData?.logo_url || null;
+
+  let background_url =
+  profileData?.background_url || null;
 
   // 🔥 UPLOAD FOTO
   if (logoFile) {
@@ -279,6 +288,48 @@ document.getElementById("salvar").onclick = async () => {
       publicUrlData.publicUrl;
   }
 
+  // 🔥 UPLOAD BACKGROUND
+if (backgroundFile) {
+
+  const fileExt =
+    backgroundFile.name
+      .split(".")
+      .pop();
+
+  const fileName =
+    `bg-${user.id}-${Date.now()}.${fileExt}`;
+
+  const filePath =
+    `backgrounds/${fileName}`;
+
+  const {
+    error: bgError
+  } = await supabase.storage
+    .from("backgrounds")
+    .upload(filePath, backgroundFile, {
+      upsert: true
+    });
+
+  if (bgError) {
+
+    console.log(bgError);
+
+    msg.innerText =
+      "Erro upload fundo";
+
+    return;
+  }
+
+  const {
+    data: bgPublic
+  } = supabase.storage
+    .from("backgrounds")
+    .getPublicUrl(filePath);
+
+  background_url =
+    bgPublic.publicUrl;
+}
+  
   // 🔥 UPDATE PROFILE
   const { error } =
     await supabase
@@ -286,8 +337,11 @@ document.getElementById("salvar").onclick = async () => {
       .update({
         studio_name,
         username,
-        logo_url
+        logo_url,
+        theme_color,
+        background_url
       })
+    
       .eq("id", user.id);
 
   if (error) {
