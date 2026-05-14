@@ -175,8 +175,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         : "none";
     }
 
-    const safeUsername = encodeURIComponent(profile.username?.trim() || "");
-    const fullLink = `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${safeUsername}`;
+    const usernameRaw = profile.username || "usuario";
+    const safeUsername = encodeURIComponent(usernameRaw.trim());
+    
+    const fullLink =
+      `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${safeUsername}`;
 
     publicLink.innerHTML = fullLink;
 
