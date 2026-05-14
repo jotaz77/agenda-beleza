@@ -488,7 +488,7 @@ if (backgroundFile) {
           <input type="checkbox" id="active-${i}" ${dia?.active !== false ? "checked" : ""}>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2">
           <input type="time" id="start-${i}" value="${dia?.start_time || "09:00"}">
           <input type="time" id="end-${i}" value="${dia?.end_time || "18:00"}">
         </div>
