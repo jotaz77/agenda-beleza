@@ -57,7 +57,7 @@
         class="bg-pink-50 text-center p-3 rounded-2xl mt-4 text-sm">
       </div>
 
-      <div class="grid grid-cols-2 gap-3 mt-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
 
       <button id="copiar"
         class="text-white p-3 rounded-2xl font-bold">
@@ -142,7 +142,7 @@
         Disponibilidade 📅
       </h2>
 
-      <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
 
         <div>
           <label class="text-sm text-gray-500">Atendimentos simultâneos</label>
@@ -488,7 +488,7 @@ if (backgroundFile) {
           <input type="checkbox" id="active-${i}" ${dia?.active !== false ? "checked" : ""}>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <input type="time" id="start-${i}" value="${dia?.start_time || "09:00"}">
           <input type="time" id="end-${i}" value="${dia?.end_time || "18:00"}">
         </div>
