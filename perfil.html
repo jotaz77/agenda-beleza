@@ -169,10 +169,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const theme = profile.theme_color || "#ec4899";
     themeColorInput.value = theme;
 
-    if (backgroundBlur) {
-      backgroundBlur.style.backgroundImage = profile.background_url
-        ? `url('${profile.background_url}')`
-        : "none";
+    if (profile.background_url) {
+      backgroundBlur.style.backgroundImage = `url('${profile.background_url}')`;
+      backgroundBlur.style.backgroundSize = "cover";
+      backgroundBlur.style.backgroundPosition = "center";
+    } else {
+      backgroundBlur.style.backgroundImage = "none";
+      backgroundBlur.style.backgroundColor = "#f5e6dc"; // bege/rosinha suave
     }
 
     const usernameRaw = profile.username || "usuario";
