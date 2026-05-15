@@ -11,7 +11,7 @@
 
 <body
   id="body"
-  class="min-h-[100dvh] p-3 sm:p-4 overflow-x-hidden relative overflow-y-auto bg-[#fbe4d8]"
+  class="min-h-[100dvh] p-3 sm:p-4 overflow-x-hidden relative overflow-y-auto bg-[#CFCFCF]"
 >
 
 <!-- BACKGROUND -->
@@ -28,7 +28,7 @@
     <img
       id="preview"
       src="https://placehold.co/120x120/png"
-      class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-pink-200 shadow"
+      class="w-28 h-28 rounded-full mx-auto object-cover border-4 border-[#696969] shadow"
     >
 
     <h1 id="studioTitle" class="text-2xl font-bold text-center mt-4 text-gray-800">
@@ -44,17 +44,17 @@
       </button>
 
       <button id="abrirAgenda"
-        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
+        class="bg-white border border-[#696969] text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
         Agendamento Manual
       </button>
 
       <button onclick="window.location.href='painel.html'"
-        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
+        class="bg-white border border-[#696969] text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
         Painel
       </button>
 
       <button onclick="window.location.href='servicos.html'"
-        class="bg-white border border-pink-300 text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
+        class="bg-white border border-[#696969] text-pink-600 p-3 rounded-2xl font-bold hover:bg-pink-50">
         Serviços
       </button>
 
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       id: user.id,
       studio_name: "Meu Studio",
       username: `user_${user.id.slice(0, 6)}`,
-      theme_color: "#ec4899",
+      theme_color: "#CFCFCF",
       logo_url: null,
       background_url: null,
       capacity: 1,
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (profile.logo_url) preview.src = profile.logo_url;
 
-  const theme = profile.theme_color || "#ec4899";
+  const theme = profile.theme_color || "#CFCFCF";
   themeColorInput.value = theme;
 
   if (profile.background_url) {
@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   publicLink.innerHTML = `
     <a href="${fullLink}"
        target="_blank"
-       class="text-pink-600 break-all font-semibold">
+       class="text-[#A9A9A9] break-all font-semibold">
       ${fullLink}
     </a>
   `;
