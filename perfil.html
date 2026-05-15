@@ -327,10 +327,43 @@ document.addEventListener("DOMContentLoaded", async () => {
       const div = document.createElement("div");
       div.className = "border p-3 rounded-2xl";
 
-      div.innerHTML = `
-        <b>${dias[i]}</b>
-        <input type="time" id="start-${i}" value="${d?.start_time || "09:00"}">
-        <input type="time" id="end-${i}" value="${d?.end_time || "18:00"}">
+            div.innerHTML = `
+        <div class="flex items-center justify-between mb-3">
+      
+          <b class="text-lg">${dias[i]}</b>
+      
+          <label class="flex items-center gap-2 text-sm">
+      
+            <span>Aberto</span>
+      
+            <input
+              type="checkbox"
+              id="active-${i}"
+              class="w-5 h-5"
+              ${d?.active !== false ? "checked" : ""}
+            >
+      
+          </label>
+      
+        </div>
+      
+        <div class="grid grid-cols-2 gap-2">
+      
+          <input
+            type="time"
+            id="start-${i}"
+            value="${d?.start_time || "09:00"}"
+            class="border p-2 rounded-xl"
+          >
+      
+          <input
+            type="time"
+            id="end-${i}"
+            value="${d?.end_time || "18:00"}"
+            class="border p-2 rounded-xl"
+          >
+      
+        </div>
       `;
 
       availabilityList.appendChild(div);
