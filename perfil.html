@@ -152,22 +152,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     .maybeSingle();
   
   if (!profile) {
-    const { error: insertError } = await supabase.from("profiles").insert({
+    const { error } = await supabase.from("profiles").insert({
       id: user.id,
       studio_name: "Meu Studio",
       username: "",
       theme_color: "#ec4899",
-      created_at: new Date()
+      logo_url: null,
+      background_url: null,
+      capacity: 1,
+      slot_interval: 30,
+      created_at: new Date().toISOString()
     });
-  
-    if (insertError) {
-      console.error(insertError);
-      return;
-    }
-  
-    location.reload();
+
+  if (error) {
+    console.error("Erro ao criar profile:", error);
     return;
   }
+
+  // recarrega uma vez só após criação
+  window.location.reload();
+  return;
+}
   
   profileData = profile;
 
@@ -190,10 +195,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         "linear-gradient(135deg, #fbe4d8, #f8d7e0)";
     }
     const usernameRaw = (profile.username || "").trim();
-    
-    if (!usernameRaw) {
-      console.warn("Username vazio — link pode não funcionar corretamente");
-    }
+
+if (!usernameRaw) {
+  publicLink.innerHTML = `
+    <span class="text-red-500 font-semibold">
+      Defina um username para gerar o link
+    </span>
+  `;
+  return;
+}
     
     const safeUsername = encodeURIComponent(usernameRaw);
     
