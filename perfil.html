@@ -150,8 +150,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     .select("*")
     .eq("id", user.id)
     .maybeSingle();
-
-  let profileData;
   
   if (!profile) {
     const { error: insertError } = await supabase.from("profiles").insert({
