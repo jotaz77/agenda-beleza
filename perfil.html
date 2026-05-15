@@ -151,11 +151,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     .eq("id", user.id)
     .maybeSingle();
 
+  let profileData;
+  
   if (!profile) {
-    console.warn("Perfil não encontrado");
+    const { error: insertError } = await supabase.from("profiles").insert({
+      id: user.id,
+      studio_name: "Meu Studio",
+      username: "",
+      theme_color: "#ec4899",
+      created_at: new Date()
+    });
+  
+    if (insertError) {
+      console.error(insertError);
+      return;
+    }
+  
+    location.reload();
+    return;
   }
-
-  profileData = profile || {};
+  
+  profileData = profile;
 
   // ================= UI PROFILE =================
   if (profile) {
@@ -175,15 +191,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       backgroundBlur.style.backgroundImage =
         "linear-gradient(135deg, #fbe4d8, #f8d7e0)";
     }
-    const usernameRaw = profile.username || "usuario";
-    const safeUsername = encodeURIComponent(usernameRaw.trim());
+    const usernameRaw = (profile.username || "").trim();
+    
+    if (!usernameRaw) {
+      console.warn("Username vazio — link pode não funcionar corretamente");
+    }
+    
+    const safeUsername = encodeURIComponent(usernameRaw);
     
     const fullLink =
       `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${safeUsername}`;
     
     // link clicável
-    publicLink.innerHTML = `
-      <a href="${fullLink}" target="_blank" class="text-pink-600 break-all font-semibold">
+   publicLink.innerHTML = `
+      <a href="${fullLink}"
+         target="_blank"
+         class="text-pink-600 break-all font-semibold">
         ${fullLink}
       </a>
     `;
@@ -239,23 +262,45 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (logoFile) {
         const path = `logos/${user.id}-${Date.now()}`;
-        await supabase.storage.from("logos").upload(path, logoFile, { upsert: true });
+        const { error: logoError } = await supabase.storage
+          .from("logos")
+          .upload(path, logoFile, { upsert: true });
+        
+        if (logoError) {
+          console.error(logoError);
+          msg.textContent = "Erro ao enviar logo";
+          return;
+        }
         logo_url = supabase.storage.from("logos").getPublicUrl(path).data.publicUrl;
       }
 
       if (backgroundFile) {
         const path = `backgrounds/${user.id}-${Date.now()}`;
-        await supabase.storage.from("backgrounds").upload(path, backgroundFile, { upsert: true });
+        const { error: bgError } = await supabase.storage
+          .from("backgrounds")
+          .upload(path, backgroundFile, { upsert: true });
+        
+        if (bgError) {
+          console.error(bgError);
+          msg.textContent = "Erro ao enviar fundo";
+          return;
+        }
         background_url = supabase.storage.from("backgrounds").getPublicUrl(path).data.publicUrl;
       }
 
-      await supabase.from("profiles").update({
+      const { error } = await supabase.from("profiles").update({
         studio_name,
         username,
         logo_url,
         background_url,
         theme_color
       }).eq("id", user.id);
+      
+      if (error) {
+        console.error(error);
+        msg.textContent = "Erro ao salvar perfil";
+        return;
+      }
 
       msg.textContent = "Salvo com sucesso!";
 
