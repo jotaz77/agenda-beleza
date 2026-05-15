@@ -145,11 +145,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   let profileData = null;
 
   // ================= PROFILE =================
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
+const { data: profile, error } = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("id", user.id)
+  .maybeSingle();
+
+if (error) {
+  console.error("Erro ao buscar profile:", error);
+  return;
+}
   
   if (!profile) {
     const { error } = await supabase.from("profiles").insert({
