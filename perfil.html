@@ -171,13 +171,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (profile.background_url) {
       backgroundBlur.style.backgroundImage = `url('${profile.background_url}')`;
-      backgroundBlur.style.backgroundSize = "cover";
-      backgroundBlur.style.backgroundPosition = "center";
     } else {
-      backgroundBlur.style.backgroundImage = "none";
-      backgroundBlur.style.backgroundColor = "#f5e6dc"; // bege/rosinha suave
+      backgroundBlur.style.backgroundImage =
+        "linear-gradient(135deg, #fbe4d8, #f8d7e0)";
     }
-
     const usernameRaw = profile.username || "usuario";
     const safeUsername = encodeURIComponent(usernameRaw.trim());
     
