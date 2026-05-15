@@ -52,18 +52,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     msg.innerText = "Entrando...";
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+const { data, error } = await supabase.auth.signInWithPassword({
+  email,
+  password
+});
 
-    if (error) {
-      msg.innerText = error.message;
-      return;
-    }
+if (error || !data?.user) {
+  msg.innerText = error?.message || "Login inválido";
+  return;
+}
 
-    window.location.href = "perfil.html";
-  });
+window.location.href = "perfil.html";
 
   document.getElementById("btnSignup").addEventListener("click", async () => {
 
