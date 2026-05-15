@@ -11,7 +11,7 @@
 
 <body
   id="body"
-  class="min-h-[100dvh] p-3 sm:p-4 overflow-x-hidden relative overflow-y-auto bg-black"
+  class="min-h-[100dvh] p-3 sm:p-4 overflow-x-hidden relative overflow-y-auto bg-[#fbe4d8]"
 >
 
 <!-- BACKGROUND -->
@@ -145,19 +145,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   let profileData = null;
 
   // ================= PROFILE =================
-const { data: profile, error } = await supabase
-  .from("profiles")
-  .select("*")
-  .eq("id", user.id)
-  .maybeSingle();
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle();
 
-if (error) {
-  console.error("Erro ao buscar profile:", error);
-  return;
-}
-  
+  if (error) {
+    console.error("Erro ao buscar profile:", error);
+    return;
+  }
+
   if (!profile) {
-    const { error } = await supabase.from("profiles").insert({
+    const { error: insertError } = await supabase.from("profiles").insert({
       id: user.id,
       studio_name: "Meu Studio",
       username: "",
@@ -169,86 +169,70 @@ if (error) {
       created_at: new Date().toISOString()
     });
 
-  if (error) {
-    console.error("Erro ao criar profile:", error);
+    if (insertError) {
+      console.error("Erro ao criar profile:", insertError);
+      return;
+    }
+
+    location.reload();
     return;
   }
 
-  // recarrega uma vez só após criação
-  window.location.reload();
-  return;
-}
-  
   profileData = profile;
 
   // ================= UI PROFILE =================
-  if (profile) {
 
-    studioInput.value = profile.studio_name || "";
-    usernameInput.value = profile.username || "";
-    studioTitle.textContent = profile.studio_name || "Meu Studio";
+  studioInput.value = profile.studio_name || "";
+  usernameInput.value = profile.username || "";
+  studioTitle.textContent = profile.studio_name || "Meu Studio";
 
-    if (profile.logo_url) preview.src = profile.logo_url;
+  if (profile.logo_url) preview.src = profile.logo_url;
 
-    const theme = profile.theme_color || "#ec4899";
-    themeColorInput.value = theme;
+  const theme = profile.theme_color || "#ec4899";
+  themeColorInput.value = theme;
 
-    if (profile.background_url) {
-      backgroundBlur.style.backgroundImage = `url('${profile.background_url}')`;
-    } else {
-      backgroundBlur.style.backgroundImage =
-        "linear-gradient(135deg, #fbe4d8, #f8d7e0)";
-    }
-    const usernameRaw = (profile.username || "").trim();
-
-if (!usernameRaw) {
-  publicLink.innerHTML = `
-    <span class="text-red-500 font-semibold">
-      Defina um username para gerar o link
-    </span>
-  `;
-  return;
-}
-    
-    const safeUsername = encodeURIComponent(usernameRaw);
-    
-    const fullLink =
-      `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${safeUsername}`;
-    
-    // link clicável
-   publicLink.innerHTML = `
-      <a href="${fullLink}"
-         target="_blank"
-         class="text-pink-600 break-all font-semibold">
-        ${fullLink}
-      </a>
-    `;
-    
-    // copiar robusto
-    el("copiar").onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(fullLink);
-        el("copiar").textContent = "Copiado!";
-        setTimeout(() => (el("copiar").textContent = "Copiar Link"), 1200);
-      } catch (err) {
-        const temp = document.createElement("input");
-        document.body.appendChild(temp);
-        temp.value = fullLink;
-        temp.select();
-        document.execCommand("copy");
-        document.body.removeChild(temp);
-        alert("Link copiado!");
-      }
-    };
-    
-    // abrir agenda
-    el("abrirAgenda").onclick = () => window.open(fullLink, "_blank");
-
-    ["copiar", "salvar", "saveSettings"].forEach(id => {
-      const b = el(id);
-      if (b) b.style.background = theme;
-    });
+  if (profile.background_url) {
+    backgroundBlur.style.backgroundImage = `url('${profile.background_url}')`;
+  } else {
+    backgroundBlur.style.backgroundImage =
+      "linear-gradient(135deg, #fbe4d8, #f8d7e0)";
   }
+
+  const usernameRaw = (profile.username || "").trim();
+  const safeUsername = encodeURIComponent(usernameRaw || "usuario");
+
+  const fullLink =
+    `https://agenda-beleza-eta.vercel.app/agendamento.html?studio=${safeUsername}`;
+
+  publicLink.innerHTML = `
+    <a href="${fullLink}"
+       target="_blank"
+       class="text-pink-600 break-all font-semibold">
+      ${fullLink}
+    </a>
+  `;
+
+  el("copiar").onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(fullLink);
+      el("copiar").textContent = "Copiado!";
+      setTimeout(() => (el("copiar").textContent = "Copiar Link"), 1200);
+    } catch {
+      const temp = document.createElement("input");
+      document.body.appendChild(temp);
+      temp.value = fullLink;
+      temp.select();
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+    }
+  };
+
+  el("abrirAgenda").onclick = () => window.open(fullLink, "_blank");
+
+  ["copiar", "salvar", "saveSettings"].forEach(id => {
+    const b = el(id);
+    if (b) b.style.background = theme;
+  });
 
   // ================= EDIT TOGGLE =================
   el("editarBtn").addEventListener("click", () => {
@@ -275,29 +259,13 @@ if (!usernameRaw) {
 
       if (logoFile) {
         const path = `logos/${user.id}-${Date.now()}`;
-        const { error: logoError } = await supabase.storage
-          .from("logos")
-          .upload(path, logoFile, { upsert: true });
-        
-        if (logoError) {
-          console.error(logoError);
-          msg.textContent = "Erro ao enviar logo";
-          return;
-        }
+        await supabase.storage.from("logos").upload(path, logoFile, { upsert: true });
         logo_url = supabase.storage.from("logos").getPublicUrl(path).data.publicUrl;
       }
 
       if (backgroundFile) {
         const path = `backgrounds/${user.id}-${Date.now()}`;
-        const { error: bgError } = await supabase.storage
-          .from("backgrounds")
-          .upload(path, backgroundFile, { upsert: true });
-        
-        if (bgError) {
-          console.error(bgError);
-          msg.textContent = "Erro ao enviar fundo";
-          return;
-        }
+        await supabase.storage.from("backgrounds").upload(path, backgroundFile, { upsert: true });
         background_url = supabase.storage.from("backgrounds").getPublicUrl(path).data.publicUrl;
       }
 
@@ -308,12 +276,8 @@ if (!usernameRaw) {
         background_url,
         theme_color
       }).eq("id", user.id);
-      
-      if (error) {
-        console.error(error);
-        msg.textContent = "Erro ao salvar perfil";
-        return;
-      }
+
+      if (error) throw error;
 
       msg.textContent = "Salvo com sucesso!";
 
@@ -336,7 +300,6 @@ if (!usernameRaw) {
   }
 
   el("saveSettings").onclick = async () => {
-
     await supabase.from("profiles").update({
       capacity: parseInt(el("capacity").value),
       slot_interval: parseInt(el("slotInterval").value)
@@ -381,4 +344,4 @@ if (!usernameRaw) {
 </script>
 
 </body>
-</html>>
+</html>
