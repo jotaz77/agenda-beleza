@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const { error: insertError } = await supabase.from("profiles").insert({
       id: user.id,
       studio_name: "Meu Studio",
-      username: `user_${user.id.slice(0, 6)}`
+      username: `user_${user.id.slice(0, 6)}`,
       theme_color: "#ec4899",
       logo_url: null,
       background_url: null,
