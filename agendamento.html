@@ -179,6 +179,27 @@ try {
 
 }
 
+serviceSelect.addEventListener("change", () => {
+
+  const selected =
+    serviceSelect.options[
+      serviceSelect.selectedIndex
+    ];
+
+  selectedDuration =
+    parseInt(
+      selected.dataset.duration || 30
+    );
+
+  const date =
+    document.getElementById("date").value;
+
+  if (date) {
+    render(date);
+  }
+
+});
+
 const slotInterval =
   profile.slot_interval || 30;
 
