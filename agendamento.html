@@ -115,30 +115,52 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 🔵 SERVIÇOS
   const { data: services } = await supabase
-    .from("services")
-    .select("*")
-    .eq("user_id", ownerId)
-    .eq("active", true);
+  .from("services")
+  .select("*")
+  .eq("user_id", ownerId)
+  .eq("active", true);
 
-  const serviceSelect = document.getElementById("service");
-  serviceSelect.innerHTML = "";
+console.log("SERVIÇOS:", services);
 
-(services || []).forEach(s => {
+const serviceSelect =
+  document.getElementById("service");
 
-  const opt = document.createElement("option");
+serviceSelect.innerHTML = "";
 
-  opt.value = s.id;
+if (!services || services.length === 0) {
 
-  opt.textContent =
-    `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
+  serviceSelect.innerHTML = `
+    <option>
+      Nenhum serviço disponível
+    </option>
+  `;
 
-  opt.dataset.duration = s.duration || 30;
-  opt.dataset.name = s.name;
-  opt.dataset.price = s.price;
+} else {
 
-  serviceSelect.appendChild(opt);
-});
+  services.forEach(s => {
 
+    const opt =
+      document.createElement("option");
+
+    opt.value = s.id;
+
+    opt.textContent =
+      `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
+
+    opt.dataset.duration =
+      s.duration || 30;
+
+    opt.dataset.name =
+      s.name;
+
+    opt.dataset.price =
+      s.price;
+
+    serviceSelect.appendChild(opt);
+
+  });
+
+}
   serviceSelect.addEventListener("change", () => {
 
   const selected =
