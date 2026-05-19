@@ -178,6 +178,48 @@ try {
   console.log(err);
 
 }
+
+const slotInterval =
+  profile.slot_interval || 30;
+
+const openTime =
+  profile.open_time || "09:00";
+
+const closeTime =
+  profile.close_time || "18:00";
+
+function gerarSlots() {
+
+  const result = [];
+
+  let [h, m] =
+    openTime.split(":").map(Number);
+
+  const [hEnd, mEnd] =
+    closeTime.split(":").map(Number);
+
+  while (
+    h < hEnd ||
+    (h === hEnd && m < mEnd)
+  ) {
+
+    const time =
+      `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+
+    result.push(time);
+
+    m += slotInterval;
+
+    if (m >= 60) {
+
+      h += Math.floor(m / 60);
+
+      m = m % 60;
+    }
+  }
+
+  return result;
+}
   // 🔵 OCUPADOS
 async function getBusy(date) {
 
