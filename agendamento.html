@@ -118,13 +118,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (profile.logo_url) document.getElementById("logo").src = profile.logo_url;
 
   // 🔵 SERVIÇOS
-  const { data: services } = await supabase
-  .from("services")
-  .select("*")
-  .eq("user_id", ownerId)
-  .eq("active", true);
+  const { data: services, error: servicesError } = await supabase
+    .from("services")
+    .select("*")
+    .eq("user_id", ownerId);
 
 console.log("SERVIÇOS:", services);
+console.log("ERRO:", servicesError);
 
 const serviceSelect =
   document.getElementById("service");
