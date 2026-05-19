@@ -113,22 +113,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   ownerId = profile.id;
-  alert("OWNER ID: " + ownerId);
-
-const { data: servicesTeste, error: errorTeste } =
-  await supabase
-    .from("services")
-    .select("*");
-
-alert(
-  "SERVIÇOS TOTAL: " +
-  JSON.stringify(servicesTeste)
-);
-
-alert(
-  "ERRO TOTAL: " +
-  JSON.stringify(errorTeste)
-);
 
   document.getElementById("studioName").innerText = profile.studio_name || "Studio";
   if (profile.logo_url) document.getElementById("logo").src = profile.logo_url;
