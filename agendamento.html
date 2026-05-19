@@ -122,9 +122,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   .from("services")
   .select("*")
   .eq("user_id", ownerId)
-  .eq("active", true);
 
 console.log("SERVIÇOS:", services);
+console.log("ERROR:", error);
 
 const serviceSelect =
   document.getElementById("service");
