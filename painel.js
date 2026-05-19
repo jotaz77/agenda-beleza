@@ -261,14 +261,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             ? `
 
-          <div class="flex gap-2 mt-4">
+          <div class="flex flex-col gap-2 mt-4">
 
             <button
-              onclick="concluir(${item.id})"
+              onclick='verDetalhes(${JSON.stringify(item)})'
               class="
-                flex-1
-                bg-green-500
-                hover:bg-green-600
+                w-full
+                bg-[#696969]
+                hover:bg-black
                 text-white
                 py-2
                 rounded-2xl
@@ -276,25 +276,45 @@ document.addEventListener("DOMContentLoaded", async () => {
                 transition
               "
             >
-              Concluir
+              Ver detalhes
             </button>
-
-            <button
-              onclick="cancelar(${item.id})"
-              class="
-                flex-1
-                bg-red-500
-                hover:bg-red-600
-                text-white
-                py-2
-                rounded-2xl
-                font-semibold
-                transition
-              "
-            >
-              Cancelar
-            </button>
-
+          
+            <div class="flex gap-2">
+          
+              <button
+                onclick="concluir(${item.id})"
+                class="
+                  flex-1
+                  bg-green-500
+                  hover:bg-green-600
+                  text-white
+                  py-2
+                  rounded-2xl
+                  font-semibold
+                  transition
+                "
+              >
+                Concluir
+              </button>
+          
+              <button
+                onclick="cancelar(${item.id})"
+                class="
+                  flex-1
+                  bg-red-500
+                  hover:bg-red-600
+                  text-white
+                  py-2
+                  rounded-2xl
+                  font-semibold
+                  transition
+                "
+              >
+                Cancelar
+              </button>
+          
+            </div>
+          
           </div>
 
         `
@@ -370,7 +390,181 @@ document.addEventListener("DOMContentLoaded", async () => {
     carregarAgendamentos();
 
   };
+// 👁️ VER DETALHES
+window.verDetalhes = function(item) {
 
+  const modal =
+    document.createElement("div");
+
+  modal.className = `
+    fixed
+    inset-0
+    bg-black/70
+    backdrop-blur-sm
+    flex
+    items-center
+    justify-center
+    z-50
+    p-4
+  `;
+
+  modal.innerHTML = `
+
+    <div class="
+      bg-white
+      w-full
+      max-w-2xl
+      rounded-3xl
+      p-6
+      shadow-2xl
+      relative
+      max-h-[90vh]
+      overflow-y-auto
+    ">
+
+      <button
+        id="fecharModal"
+        class="
+          absolute
+          top-4
+          right-4
+          text-2xl
+          text-gray-500
+          hover:text-black
+        "
+      >
+        ✕
+      </button>
+
+      <h2 class="text-2xl font-bold mb-4">
+        ${item.name}
+      </h2>
+
+      <div class="space-y-2 mb-5">
+
+        <p>
+          <b>Serviço:</b>
+          ${item.service}
+        </p>
+
+        <p>
+          <b>Telefone:</b>
+          ${item.phone}
+        </p>
+
+        <p>
+          <b>Data:</b>
+          ${item.date}
+        </p>
+
+        <p>
+          <b>Horário:</b>
+          ${item.time}
+        </p>
+
+      </div>
+
+      ${
+        item.description
+          ? `
+            <div class="mb-6">
+              <h3 class="font-bold text-lg mb-2">
+                Descrição
+              </h3>
+
+              <div class="
+                bg-gray-100
+                p-4
+                rounded-2xl
+                text-gray-700
+                whitespace-pre-wrap
+              ">
+                ${item.description}
+              </div>
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        item.photo_urls &&
+        item.photo_urls.length > 0
+
+          ? `
+
+          <div>
+
+            <h3 class="font-bold text-lg mb-3">
+              Fotos
+            </h3>
+
+            <div class="
+              grid
+              grid-cols-2
+              gap-4
+            ">
+
+              ${item.photo_urls.map(url => `
+
+                <a
+                  href="${url}"
+                  target="_blank"
+                >
+
+                  <img
+                    src="${url}"
+                    class="
+                      w-full
+                      h-52
+                      object-cover
+                      rounded-2xl
+                      hover:scale-[1.02]
+                      transition
+                      shadow-md
+                    "
+                  >
+
+                </a>
+
+              `).join("")}
+
+            </div>
+
+          </div>
+
+        `
+          : `
+            <p class="text-gray-400">
+              Nenhuma foto enviada
+            </p>
+          `
+      }
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  document
+    .getElementById("fecharModal")
+    .onclick = () => {
+
+      modal.remove();
+
+    };
+
+  modal.onclick = (e) => {
+
+    if (e.target === modal) {
+
+      modal.remove();
+
+    }
+
+  };
+
+};
+  
   // 🚀 INICIAR
   atualizarBotoesAtivos();
 
