@@ -34,6 +34,37 @@
 
   <input id="name" placeholder="Seu nome" class="w-full p-3 border rounded-xl mb-3">
   <input id="phone" placeholder="WhatsApp" class="w-full p-3 border rounded-xl mb-4">
+  <textarea
+  id="description"
+  maxlength="500"
+  placeholder="Descrição (opcional)"
+  class="w-full p-3 border rounded-xl mb-1 resize-none h-28"
+></textarea>
+
+<p class="text-xs text-gray-500 mb-4">
+  Máximo de 500 caracteres
+</p>
+
+<label class="font-semibold block mb-2">
+  Enviar fotos (máx 2)
+</label>
+
+<input
+  type="file"
+  id="photos"
+  accept="image/*"
+  multiple
+  class="
+    w-full
+    p-3
+    border
+    border-[#696969]
+    rounded-xl
+    mb-4
+    bg-white
+    text-sm
+  "
+>
 
   <button onclick="agendar()"
     class="w-full bg-[#CFCFCF] hover:bg-[#BEBEBE] text-white border border-[#696969] p-3 rounded-xl font-bold transition">
@@ -43,6 +74,10 @@
 </div>
 
 <script>
+window.onerror = function(message, source, lineno, colno, error) {
+  alert("ERRO JS: " + message);
+};
+  
 document.addEventListener("DOMContentLoaded", async () => {
 
   const supabase = window.supabase.createClient(
@@ -84,30 +119,52 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 🔵 SERVIÇOS
   const { data: services } = await supabase
-    .from("services")
-    .select("*")
-    .eq("user_id", ownerId)
-    .eq("active", true);
+  .from("services")
+  .select("*")
+  .eq("user_id", ownerId)
+  .eq("active", true);
 
-  const serviceSelect = document.getElementById("service");
-  serviceSelect.innerHTML = "";
+console.log("SERVIÇOS:", services);
 
-(services || []).forEach(s => {
+const serviceSelect =
+  document.getElementById("service");
 
-  const opt = document.createElement("option");
+serviceSelect.innerHTML = "";
 
-  opt.value = s.id;
+if (!services || services.length === 0) {
 
-  opt.innerText =
-    `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
+  serviceSelect.innerHTML = `
+    <option>
+      Nenhum serviço disponível
+    </option>
+  `;
 
-  opt.dataset.duration = s.duration || 30;
-  opt.dataset.name = s.name;
-  opt.dataset.price = s.price;
+} else {
 
-  serviceSelect.appendChild(opt);
-});
+  services.forEach(s => {
 
+    const opt =
+      document.createElement("option");
+
+    opt.value = s.id;
+
+    opt.textContent =
+      `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
+
+    opt.dataset.duration =
+      s.duration || 30;
+
+    opt.dataset.name =
+      s.name;
+
+    opt.dataset.price =
+      s.price;
+
+    serviceSelect.appendChild(opt);
+
+  });
+
+}
   serviceSelect.addEventListener("change", () => {
 
   const selected =
@@ -247,6 +304,11 @@ async function render(date) {
 
     const name = document.getElementById("name").value;
     const phone = document.getElementById("phone").value;
+    const description =
+      document.getElementById("description").value;
+
+    const photoFiles =
+      document.getElementById("photos").files;
     const date = document.getElementById("date").value;
     const serviceSelect =
   document.getElementById("service");
@@ -258,7 +320,38 @@ const selectedService =
 
 const service =
   selectedService.dataset.name;
-    
+
+    let photo_urls = [];
+
+    if (photoFiles.length > 2) {
+      alert("Máximo de 2 fotos");
+      return;
+    }
+
+    for (const file of photoFiles) {
+
+      const filePath =
+        `${ownerId}/${Date.now()}-${file.name}`;
+
+      const { error: uploadError } =
+        await supabase.storage
+          .from("appointment-photos")
+          .upload(filePath, file);
+
+      if (uploadError) {
+        console.log(uploadError);
+        alert("Erro ao enviar foto");
+        return;
+      }
+
+      const { data } =
+        supabase.storage
+          .from("appointment-photos")
+          .getPublicUrl(filePath);
+
+      photo_urls.push(data.publicUrl);
+    }
+
     if (!name || !phone || !date || !selectedSlot) {
       alert("Preencha tudo!");
       return;
@@ -274,7 +367,9 @@ const service =
         duration: selectedDuration,
         date,
         time: selectedSlot,
-        status: "booked"
+        status: "booked",
+        description,
+        photo_urls
       }]);
 
     if (error) {
