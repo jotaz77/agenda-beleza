@@ -74,6 +74,10 @@
 </div>
 
 <script>
+window.onerror = function(message, source, lineno, colno, error) {
+  alert("ERRO JS: " + message);
+};
+  
 document.addEventListener("DOMContentLoaded", async () => {
 
   const supabase = window.supabase.createClient(
