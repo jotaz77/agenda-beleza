@@ -118,93 +118,66 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (profile.logo_url) document.getElementById("logo").src = profile.logo_url;
 
   // 🔵 SERVIÇOS
-  const { data: services } = await supabase
-  .from("services")
-  .select("*")
-  .eq("user_id", ownerId)
-
-console.log("SERVIÇOS:", services);
-console.log("ERROR:", error);
-
 const serviceSelect =
   document.getElementById("service");
 
-serviceSelect.innerHTML = "";
+serviceSelect.innerHTML = `
+  <option>Carregando...</option>
+`;
 
-if (!services || services.length === 0) {
+try {
 
-  serviceSelect.innerHTML = `
-    <option>
-      Nenhum serviço disponível
-    </option>
-  `;
+  const response = await supabase
+    .from("services")
+    .select("*")
+    .eq("user_id", ownerId);
 
-} else {
+  const services = response.data;
 
-  services.forEach(s => {
+  serviceSelect.innerHTML = "";
 
-    const opt =
-      document.createElement("option");
+  if (!services || services.length === 0) {
 
-    opt.value = s.id;
+    serviceSelect.innerHTML = `
+      <option>
+        Nenhum serviço disponível
+      </option>
+    `;
 
-    opt.textContent =
-      `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
+  } else {
 
-    opt.dataset.duration =
-      s.duration || 30;
+    services.forEach(s => {
 
-    opt.dataset.name =
-      s.name;
+      const opt =
+        document.createElement("option");
 
-    opt.dataset.price =
-      s.price;
+      opt.value = s.id;
 
-    serviceSelect.appendChild(opt);
+      opt.textContent =
+        `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
 
-  });
+      opt.dataset.duration =
+        s.duration || 30;
 
-}
-  serviceSelect.addEventListener("change", () => {
+      opt.dataset.name =
+        s.name;
 
-  const selected =
-    serviceSelect.options[serviceSelect.selectedIndex];
+      opt.dataset.price =
+        s.price;
 
-  selectedDuration =
-    parseInt(selected.dataset.duration || 30);
+      serviceSelect.appendChild(opt);
 
-  const date =
-    document.getElementById("date").value;
+    });
 
-  if (date) render(date);
-});
-
-  // 🔵 PEGAR CONFIG (PROFILE OU GLOBAL FUTURO)
-  const slotInterval = profile.slot_interval || 30;
-  const openTime = profile.open_time || "09:00";
-  const closeTime = profile.close_time || "18:00";
-
-  function gerarSlots() {
-    const result = [];
-
-    let [h, m] = openTime.split(":").map(Number);
-    const [hEnd, mEnd] = closeTime.split(":").map(Number);
-
-    while (h < hEnd || (h === hEnd && m < mEnd)) {
-
-      const time = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-      result.push(time);
-
-      m += slotInterval;
-      if (m >= 60) {
-        h += Math.floor(m / 60);
-        m = m % 60;
-      }
-    }
-
-    return result;
   }
 
+} catch(err) {
+
+  alert("Erro ao carregar serviços");
+
+  console.log(err);
+
+}
   // 🔵 OCUPADOS
 async function getBusy(date) {
 
