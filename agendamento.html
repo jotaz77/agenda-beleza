@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   opt.value = s.id;
 
-  opt.innerText =
+  opt.textContent =
     `${s.name} - R$ ${Number(s.price).toFixed(2)}`;
 
   opt.dataset.duration = s.duration || 30;
