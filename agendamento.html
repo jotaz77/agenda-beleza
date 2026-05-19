@@ -327,7 +327,7 @@ const service =
     for (const file of photoFiles) {
 
       const filePath =
-        `${ownerId}/${crypto.randomUUID()}-${file.name}`;
+        `${ownerId}/${Date.now()}-${file.name}`;
 
       const { error: uploadError } =
         await supabase.storage
