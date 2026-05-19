@@ -36,9 +36,14 @@
   <input id="phone" placeholder="WhatsApp" class="w-full p-3 border rounded-xl mb-4">
   <textarea
   id="description"
+  maxlength="500"
   placeholder="Descrição (opcional)"
-  class="w-full p-3 border rounded-xl mb-3 resize-none h-28"
+  class="w-full p-3 border rounded-xl mb-1 resize-none h-28"
 ></textarea>
+
+<p class="text-xs text-gray-500 mb-4">
+  Máximo de 500 caracteres
+</p>
 
 <label class="font-semibold block mb-2">
   Enviar fotos (máx 2)
@@ -49,7 +54,16 @@
   id="photos"
   accept="image/*"
   multiple
-  class="w-full p-3 border rounded-xl mb-4 bg-white"
+  class="
+    w-full
+    p-3
+    border
+    border-[#696969]
+    rounded-xl
+    mb-4
+    bg-white
+    text-sm
+  "
 >
 
   <button onclick="agendar()"
@@ -291,7 +305,7 @@ const service =
     for (const file of photoFiles) {
 
       const filePath =
-        `${ownerId}/${Date.now()}-${file.name}`;
+        `${ownerId}/${crypto.randomUUID()}-${file.name}`;
 
       const { error: uploadError } =
         await supabase.storage
