@@ -255,55 +255,60 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   }
 
-  // 💾 SALVAR
-  btnSalvar.addEventListener("click", async () => {
+ // 💾 SALVAR
+btnSalvar.addEventListener("click", async () => {
 
-    const name =
-      document.getElementById("name").value;
+  const name =
+    document.getElementById("name").value;
 
-    const price =
-      document.getElementById("price").value;
+  const price =
+    document.getElementById("price").value;
 
-    const duration =
-      document.getElementById("duration").value;
+  const duration =
+    document.getElementById("duration").value;
 
-    if (!name || !price || !duration) {
+  const description =
+    document.getElementById("description").value;
 
-      alert("Preencha tudo");
+  if (!name || !price || !duration) {
 
-      return;
-    }
+    alert("Preencha tudo");
 
-    const { error } =
-      await supabase
-        .from("services")
-        .insert([
-          {
-            user_id: user.id,
-            name,
-            price,
-            duration,
-            active: true
-          }
-        ]);
+    return;
+  }
 
-    if (error) {
+  const { error } =
+    await supabase
+      .from("services")
+      .insert([
+        {
+          user_id: user.id,
+          name,
+          price,
+          duration,
+          description,
+          active: true
+        }
+      ]);
 
-      console.log(error);
+  if (error) {
 
-      alert("Erro ao salvar");
+    console.log(error);
 
-      return;
-    }
+    alert("Erro ao salvar");
 
-    // LIMPAR
-    document.getElementById("name").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("duration").value = "";
+    return;
+  }
 
-    carregarServicos();
+  // LIMPAR
+  document.getElementById("name").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("duration").value = "";
+  document.getElementById("description").value = "";
 
-  });
+  carregarServicos();
+
+});
 
   // 🔄 ATIVAR/DESATIVAR
   window.toggleServico = async function (id, ativo) {
