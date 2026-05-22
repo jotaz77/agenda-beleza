@@ -212,6 +212,16 @@ document.addEventListener("DOMContentLoaded", async () => {
           <p class="text-[#808080] text-sm">
             ⏰ ${servico.duration} min
           </p>
+          
+          ${
+            servico.description
+              ? `
+                <p class="text-[#696969] text-sm mt-2 whitespace-pre-wrap">
+                  📋 ${servico.description}
+                </p>
+              `
+              : ""
+          }
 
         </div>
 
