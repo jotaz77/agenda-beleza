@@ -212,7 +212,40 @@ document.addEventListener("DOMContentLoaded", async () => {
           <p class="text-[#808080] text-sm">
             ⏰ ${servico.duration} min
           </p>
+
+          ${
+            servico.description
+              ? `
+                <button
+                  onclick="toggleDescricao(${servico.id})"
+                  class="
+                    text-sm
+                    text-blue-600
+                    mt-2
+                    underline
+                  "
+                >
+                  ⬇️ Ver descrição
+                </button>
           
+                <div
+                  id="descricao-${servico.id}"
+                  class="hidden mt-2"
+                >
+                  <p class="
+                    text-sm
+                    text-gray-600
+                    bg-gray-100
+                    p-3
+                    rounded-2xl
+                  ">
+                    ${servico.description}
+                  </p>
+                </div>
+              `
+              : ""
+          }
+
           ${
             servico.description
               ? `
@@ -360,6 +393,35 @@ btnSalvar.addEventListener("click", async () => {
     );
 
   div.classList.toggle("hidden");
+
+};
+
+// MOSTRAR / OCULTAR DESCRIÇÃO
+window.toggleDescricao = function(id) {
+
+  const div =
+    document.getElementById(
+      `descricao-${id}`
+    );
+
+  const button =
+    event.target;
+
+  if (div.classList.contains("hidden")) {
+
+    div.classList.remove("hidden");
+
+    button.innerHTML =
+      "⬆️ Ocultar descrição";
+
+  } else {
+
+    div.classList.add("hidden");
+
+    button.innerHTML =
+      "⬇️ Ver descrição";
+
+  }
 
 };
 
