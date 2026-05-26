@@ -216,9 +216,26 @@ document.addEventListener("DOMContentLoaded", async () => {
           ${
             servico.description
               ? `
-                <p class="text-[#696969] text-sm mt-2 whitespace-pre-wrap">
-                  📋 ${servico.description}
-                </p>
+                <button
+                  onclick="toggleDescricao(${servico.id})"
+                  class="
+                    text-sm
+                    text-[#696969]
+                    mt-2
+                    underline
+                  "
+                >
+                  ⬇️ Ver descrição
+                </button>
+          
+                <div
+                  id="descricao-${servico.id}"
+                  class="hidden mt-2"
+                >
+                  <p class="text-[#696969] text-sm whitespace-pre-wrap">
+                    📋 ${servico.description}
+                  </p>
+                </div>
               `
               : ""
           }
@@ -334,6 +351,17 @@ btnSalvar.addEventListener("click", async () => {
     carregarServicos();
 
   };
+
+  window.toggleDescricao = function(id) {
+
+  const div =
+    document.getElementById(
+      `descricao-${id}`
+    );
+
+  div.classList.toggle("hidden");
+
+};
 
   // ❌ EXCLUIR
   window.deletarServico = async function (id) {
