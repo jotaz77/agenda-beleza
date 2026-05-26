@@ -220,39 +220,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                   onclick="toggleDescricao(${servico.id})"
                   class="
                     text-sm
-                    text-blue-600
-                    mt-2
-                    underline
-                  "
-                >
-                  ⬇️ Ver descrição
-                </button>
-          
-                <div
-                  id="descricao-${servico.id}"
-                  class="hidden mt-2"
-                >
-                  <p class="
-                    text-sm
-                    text-gray-600
-                    bg-gray-100
-                    p-3
-                    rounded-2xl
-                  ">
-                    ${servico.description}
-                  </p>
-                </div>
-              `
-              : ""
-          }
-
-          ${
-            servico.description
-              ? `
-                <button
-                  onclick="toggleDescricao(${servico.id})"
-                  class="
-                    text-sm
                     text-[#696969]
                     mt-2
                     underline
@@ -384,17 +351,6 @@ btnSalvar.addEventListener("click", async () => {
     carregarServicos();
 
   };
-
-  window.toggleDescricao = function(id) {
-
-  const div =
-    document.getElementById(
-      `descricao-${id}`
-    );
-
-  div.classList.toggle("hidden");
-
-};
 
 // MOSTRAR / OCULTAR DESCRIÇÃO
 window.toggleDescricao = function(id) {
