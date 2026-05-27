@@ -185,12 +185,12 @@ async function carregarAddons() {
 
   if (!data || data.length === 0) {
 
-    addonsArea.classList.add("hidden");
+    addonsArea.style.display = "block";
 
     return;
   }
 
-  addonsArea.classList.remove("hidden");
+  addonsArea.style.display = "block";
 
   addonsList.innerHTML = "";
 
