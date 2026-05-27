@@ -49,11 +49,7 @@
 </div>
 
 <!-- ADICIONAIS -->
-<div
-  id="addonsArea"
-  class="mb-4"
-  style="display:none;"
->
+<div id="addonsArea" class="mb-4 hidden">
 
   <label class="font-semibold block mb-2">
     Adicionais
@@ -184,13 +180,16 @@ async function carregarAddons() {
   }
 
   if (!data || data.length === 0) {
-
-    addonsArea.style.display = "block";
-
+    addonsArea.classList.remove("hidden");
+    addonsList.innerHTML = `
+      <p class="text-sm text-gray-500">
+        Nenhum adicional disponível
+      </p>
+    `;
     return;
   }
 
-  addonsArea.style.display = "block";
+  addonsArea.classList.remove("hidden");
 
   addonsList.innerHTML = "";
 
@@ -200,7 +199,7 @@ async function carregarAddons() {
       document.createElement("label");
   
     label.className =
-      "flex items-center gap-2 bg-white border rounded-xl p-3 cursor-pointer";
+      "flex items-center gap-3 bg-white border rounded-xl p-3 cursor-pointer w-full";
   
     const checkbox =
       document.createElement("input");
