@@ -232,55 +232,69 @@ document.addEventListener("DOMContentLoaded", async () => {
                   id="descricao-${servico.id}"
                   class="hidden mt-2"
                 >
-                  <p class="text-[#696969] text-sm whitespace-pre-wrap">
+          
+                  <p class="
+                    text-[#696969]
+                    text-sm
+                    whitespace-pre-wrap
+                    mb-3
+                  ">
                     📋 ${servico.description}
                   </p>
+          
+                  <button
+                    onclick="mostrarEdicao(${servico.id})"
+                    class="
+                      text-sm
+                      text-blue-600
+                      underline
+                      mb-2
+                    "
+                  >
+                    ✏️ Editar descrição
+                  </button>
+          
+                  <div
+                    id="editar-${servico.id}"
+                    class="hidden"
+                  >
+          
+                    <textarea
+                      id="textarea-${servico.id}"
+                      class="
+                        w-full
+                        border
+                        border-[#696969]
+                        rounded-2xl
+                        p-3
+                        text-sm
+                        h-28
+                        resize-none
+                      "
+                    >${servico.description}</textarea>
+          
+                    <button
+                      onclick="salvarDescricao(${servico.id})"
+                      class="
+                        mt-2
+                        bg-[#696969]
+                        text-white
+                        px-4
+                        py-2
+                        rounded-2xl
+                        text-sm
+                      "
+                    >
+                      Salvar descrição
+                    </button>
+          
+                  </div>
+          
                 </div>
               `
               : ""
           }
 
-        </div>
-
-        <div class="flex gap-2">
-
-          <button
-            onclick="toggleServico(${servico.id}, ${servico.active})"
-            class="
-              px-4
-              py-2
-              rounded-2xl
-              text-white
-              font-semibold
-              ${servico.active ? 'bg-yellow-500' : 'bg-green-500'}
-            "
-          >
-            ${servico.active ? 'Desativar' : 'Ativar'}
-          </button>
-
-          <button
-            onclick="deletarServico(${servico.id})"
-            class="
-              px-4
-              py-2
-              rounded-2xl
-              bg-red-500
-              text-white
-              font-semibold
-            "
-          >
-            Excluir
-          </button>
-
-        </div>
-
-      `;
-
-      lista.appendChild(div);
-
-    });
-
-  }
 
  // 💾 SALVAR
 btnSalvar.addEventListener("click", async () => {
