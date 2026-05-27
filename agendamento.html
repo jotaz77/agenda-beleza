@@ -47,7 +47,21 @@
   ></p>
 
 </div>
-  
+
+<!-- ADICIONAIS -->
+<div id="addonsArea" class="mb-4 hidden">
+
+  <label class="font-semibold block mb-2">
+    Adicionais
+  </label>
+
+  <div
+    id="addonsList"
+    class="space-y-2"
+  ></div>
+
+</div>
+
   <label class="font-semibold">Data</label>
   <input type="date" id="date" class="w-full p-3 border rounded-xl mb-4">
 
@@ -122,6 +136,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const timesDiv = document.getElementById("times");
 
+  const addonsArea =
+    document.getElementById("addonsArea");
+
+  const addonsList =
+    document.getElementById("addonsList");
+
+  let selectedAddons = [];
+
   // 🔵 PERFIL
   const { data: profile } = await supabase
     .from("profiles")
@@ -138,6 +160,74 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("studioName").innerText = profile.studio_name || "Studio";
   if (profile.logo_url) document.getElementById("logo").src = profile.logo_url;
+
+// 🔵 ADICIONAIS
+async function carregarAddons() {
+
+  const { data, error } =
+    await supabase
+      .from("service_addons")
+      .select("*")
+      .eq("user_id", ownerId)
+      .eq("active", true);
+
+  if (error) {
+
+    console.log(error);
+
+    return;
+  }
+
+  if (!data || data.length === 0) {
+
+    addonsArea.classList.add("hidden");
+
+    return;
+  }
+
+  addonsArea.classList.remove("hidden");
+
+  addonsList.innerHTML = "";
+
+  data.forEach(addon => {
+
+    const div =
+      document.createElement("label");
+
+    div.className = `
+      flex
+      items-center
+      gap-2
+      bg-white
+      border
+      rounded-xl
+      p-3
+      cursor-pointer
+    `;
+
+    div.innerHTML = `
+
+      <input
+        type="checkbox"
+        value="${addon.id}"
+        data-name="${addon.name}"
+        data-price="${addon.price}"
+        data-duration="${addon.duration}"
+      >
+
+      <span>
+        ✨ ${addon.name}
+        (+R$${Number(addon.price).toFixed(2)})
+      </span>
+
+    `;
+
+    addonsList.appendChild(div);
+
+  });
+
+}
+
 
   // 🔵 SERVIÇOS
 const serviceSelect =
