@@ -157,6 +157,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   ownerId = profile.id;
+
+  if (!ownerId) {
+    alert("Erro: ownerId não carregado");
+    return;
+  }
+  
   await carregarAddons();
 
   document.getElementById("studioName").innerText = profile.studio_name || "Studio";
