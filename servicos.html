@@ -294,8 +294,45 @@ document.addEventListener("DOMContentLoaded", async () => {
               `
               : ""
           }
+          
+        </div>
 
+        <div class="flex gap-2">
 
+          <button
+            onclick="toggleServico(${servico.id}, ${servico.active})"
+            class="
+              px-4
+              py-2
+              rounded-2xl
+              text-white
+              font-semibold
+              ${servico.active ? 'bg-yellow-500' : 'bg-green-500'}
+            "
+          >
+            ${servico.active ? 'Desativar' : 'Ativar'}
+          </button>
+
+          <button
+            onclick="deletarServico(${servico.id})"
+            class="
+              px-4
+              py-2
+              rounded-2xl
+              bg-red-500
+              text-white
+              font-semibold
+            "
+          >
+            Excluir
+          </button>
+
+        </div>
+
+      `;
+
+      lista.appendChild(div);
+      
  // 💾 SALVAR
 btnSalvar.addEventListener("click", async () => {
 
@@ -390,6 +427,7 @@ window.toggleDescricao = function(id) {
 
     button.innerHTML =
       "⬇️ Ver descrição";
+
 
   }
 
