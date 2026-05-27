@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
 
         btn.classList.add(
-          "bg-pink-500",
+          "bg-[#696969]",
           "text-white",
           "shadow-lg",
           "scale-105"
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
 
         btn.classList.remove(
-          "bg-pink",
+          "bg-[#696969]",
           "text-white",
           "shadow-lg",
           "scale-105"
