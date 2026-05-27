@@ -184,6 +184,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnSalvar =
     document.getElementById("salvar");
 
+  const btnSalvarAddon =
+    document.getElementById("salvarAddon");
+
   // 📥 CARREGAR
   async function carregarServicos() {
 
@@ -439,6 +442,57 @@ btnSalvar.addEventListener("click", async () => {
   document.getElementById("description").value = "";
 
   carregarServicos();
+
+});
+
+
+// 💾 SALVAR ADICIONAL
+btnSalvarAddon.addEventListener("click", async () => {
+
+  const name =
+    document.getElementById("addonName").value;
+
+  const price =
+    document.getElementById("addonPrice").value;
+
+  const duration =
+    document.getElementById("addonDuration").value;
+
+  if (!name || !price || !duration) {
+
+    alert("Preencha tudo");
+
+    return;
+  }
+
+  const { error } =
+    await supabase
+      .from("service_addons")
+      .insert([
+        {
+          user_id: user.id,
+          name,
+          price,
+          duration,
+          active: true
+        }
+      ]);
+
+  if (error) {
+
+    console.log(error);
+
+    alert("Erro ao salvar adicional");
+
+    return;
+  }
+
+  // LIMPAR
+  document.getElementById("addonName").value = "";
+  document.getElementById("addonPrice").value = "";
+  document.getElementById("addonDuration").value = "";
+
+  alert("Adicional salvo!");
 
 });
 
