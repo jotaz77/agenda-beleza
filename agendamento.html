@@ -196,39 +196,40 @@ async function carregarAddons() {
 
   data.forEach(addon => {
 
-    const div =
+    const label =
       document.createElement("label");
-
-    div.className = `
-      flex
-      items-center
-      gap-2
-      bg-white
-      border
-      rounded-xl
-      p-3
-      cursor-pointer
-    `;
-
-    div.innerHTML = `
-
-      <input
-        type="checkbox"
-        value="${addon.id}"
-        data-name="${addon.name}"
-        data-price="${addon.price}"
-        data-duration="${addon.duration}"
-      >
-
-      <span>
-        ✨ ${addon.name}
-        (+R$${Number(addon.price).toFixed(2)})
-      </span>
-
-    `;
-
-    addonsList.appendChild(div);
-
+  
+    label.className =
+      "flex items-center gap-2 bg-white border rounded-xl p-3 cursor-pointer";
+  
+    const checkbox =
+      document.createElement("input");
+  
+    checkbox.type = "checkbox";
+  
+    checkbox.value = addon.id;
+  
+    checkbox.dataset.name =
+      addon.name;
+  
+    checkbox.dataset.price =
+      addon.price;
+  
+    checkbox.dataset.duration =
+      addon.duration;
+  
+    const span =
+      document.createElement("span");
+  
+    span.innerText =
+      `✨ ${addon.name} (+R$${Number(addon.price).toFixed(2)})`;
+  
+    label.appendChild(checkbox);
+  
+    label.appendChild(span);
+  
+    addonsList.appendChild(label);
+  
   });
 
   // 🔵 SERVIÇOS
