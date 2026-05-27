@@ -171,6 +171,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 // 🔵 ADICIONAIS
 async function carregarAddons() {
 
+  if (!ownerId) {
+    console.warn("ownerId vazio");
+    return;
+  }
+
   const { data, error } =
     await supabase
       .from("service_addons")
