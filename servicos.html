@@ -437,6 +437,18 @@ window.toggleDescricao = function(id) {
 
 };
 
+// MOSTRAR / OCULTAR EDIÇÃO
+window.mostrarEdicao = function(id) {
+
+  const div =
+    document.getElementById(
+      `editar-${id}`
+    );
+
+  div.classList.toggle("hidden");
+
+};
+
   // ❌ EXCLUIR
   window.deletarServico = async function (id) {
 
