@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
 
         btn.classList.remove(
-          "bg-[#696969]",
+          "bg-pink",
           "text-white",
           "shadow-lg",
           "scale-105"
