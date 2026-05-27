@@ -49,7 +49,11 @@
 </div>
 
 <!-- ADICIONAIS -->
-<div id="addonsArea" class="mb-4 hidden">
+<div
+  id="addonsArea"
+  class="mb-4"
+  style="display:none;"
+>
 
   <label class="font-semibold block mb-2">
     Adicionais
@@ -157,12 +161,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   ownerId = profile.id;
-
-  if (!ownerId) {
-    alert("Erro: ownerId não carregado");
-    return;
-  }
-  
   await carregarAddons();
 
   document.getElementById("studioName").innerText = profile.studio_name || "Studio";
@@ -174,10 +172,9 @@ async function carregarAddons() {
   const { data, error } =
     await supabase
       .from("service_addons")
-      .select("*");
-
-  console.log("TODOS ADDONS:", data);
-  console.log("ERRO:", error);
+      .select("*")
+      .eq("user_id", ownerId)
+      .eq("active", true);
 
   if (error) {
 
@@ -187,58 +184,56 @@ async function carregarAddons() {
   }
 
   if (!data || data.length === 0) {
-    addonsArea.classList.remove("hidden");
-    addonsList.innerHTML = `
-      <p class="text-sm text-gray-500">
-        Nenhum adicional disponível
-      </p>
-    `;
+
+    addonsArea.style.display = "block";
+
     return;
   }
 
-  addonsArea.classList.remove("hidden");
+  addonsArea.style.display = "block";
 
   addonsList.innerHTML = "";
 
   data.forEach(addon => {
 
-    const label =
+    const div =
       document.createElement("label");
-  
-    label.className =
-      "flex items-center gap-3 bg-white border rounded-xl p-3 cursor-pointer w-full";
-  
-    const checkbox =
-      document.createElement("input");
-  
-    checkbox.type = "checkbox";
-  
-    checkbox.value = addon.id;
-  
-    checkbox.dataset.name =
-      addon.name;
-  
-    checkbox.dataset.price =
-      addon.price;
-  
-    checkbox.dataset.duration =
-      addon.duration;
-  
-    const span =
-      document.createElement("span");
-  
-    span.innerText =
-      `✨ ${addon.name} (+R$${Number(addon.price).toFixed(2)})`;
-  
-    label.appendChild(checkbox);
-  
-    label.appendChild(span);
-  
-    addonsList.appendChild(label);
-  
+
+    div.className = `
+      flex
+      items-center
+      gap-2
+      bg-white
+      border
+      rounded-xl
+      p-3
+      cursor-pointer
+    `;
+
+    div.innerHTML = `
+
+      <input
+        type="checkbox"
+        value="${addon.id}"
+        data-name="${addon.name}"
+        data-price="${addon.price}"
+        data-duration="${addon.duration}"
+      >
+
+      <span>
+        ✨ ${addon.name}
+        (+R$${Number(addon.price).toFixed(2)})
+      </span>
+
+    `;
+
+    addonsList.appendChild(div);
+
   });
 
 }
+
+
   // 🔵 SERVIÇOS
 const serviceSelect =
   document.getElementById("service");
