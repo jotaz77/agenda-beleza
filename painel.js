@@ -244,7 +244,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             </h2>
 
             <p class="text-gray-600 mt-1">
-              💅 ${item.service}
+              🏷 ${item.service}
             </p>
 
             <p class="text-sm text-gray-500 mt-1">
