@@ -449,6 +449,40 @@ window.mostrarEdicao = function(id) {
 
 };
 
+// 💾 SALVAR DESCRIÇÃO
+window.salvarDescricao = async function(id) {
+
+  const textarea =
+    document.getElementById(
+      `textarea-${id}`
+    );
+
+  const novaDescricao =
+    textarea.value;
+
+  const { error } =
+    await supabase
+      .from("services")
+      .update({
+        description: novaDescricao
+      })
+      .eq("id", id)
+      .eq("user_id", user.id);
+
+  if (error) {
+
+    console.log(error);
+
+    alert("Erro ao salvar descrição");
+
+    return;
+
+  }
+
+  carregarServicos();
+
+};
+
   // ❌ EXCLUIR
   window.deletarServico = async function (id) {
 
