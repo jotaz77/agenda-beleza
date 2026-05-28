@@ -127,6 +127,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const params = new URLSearchParams(window.location.search);
   const username = params.get("studio");
+  alert("USERNAME: " + username);
 
   if (!username) {
     alert("Studio não encontrado");
@@ -235,6 +236,7 @@ alert("Adicionais encontrados: " + data.length);
 }
 
 ownerId = profile.id;
+alert("OWNER ID: " + ownerId);
 
 await carregarAddons();
 
