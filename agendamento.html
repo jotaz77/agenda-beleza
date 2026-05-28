@@ -138,16 +138,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   let selectedSlot = null;
   let selectedDuration = 30;
 
-  const timesDiv = document.getElementById("times");
-
-  const addonsArea =
-    document.getElementById("addonsArea");
-
-  const addonsList =
-    document.getElementById("addonsList");
-
-  let selectedAddons = [];
-
   // 🔵 PERFIL
   const { data: profile } = await supabase
     .from("profiles")
@@ -159,6 +149,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert("Studio não encontrado");
     return;
   }
+
+  const timesDiv =
+  document.getElementById("times");
+
+const addonsArea =
+  document.getElementById("addonsArea");
+
+const addonsList =
+  document.getElementById("addonsList");
+
+let selectedAddons = [];
 
 // 🔵 ADICIONAIS
 async function carregarAddons() {
