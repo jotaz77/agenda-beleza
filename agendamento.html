@@ -181,11 +181,15 @@ async function carregarAddons() {
 
   if (!data || data.length === 0) {
 
+    alert("Nenhum adicional encontrado");
+  
     addonsArea.style.display = "block";
-
+  
     return;
-  }
+}
 
+alert("Adicionais encontrados: " + data.length);
+  
   addonsArea.style.display = "block";
 
   addonsList.innerHTML = "";
