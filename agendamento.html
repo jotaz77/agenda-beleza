@@ -167,9 +167,10 @@ async function carregarAddons() {
     await supabase
       .from("service_addons")
       .select("*")
-      .eq("user_id", ownerId)
-      .eq("active", true);
-
+      .eq("user_id", ownerId);
+  
+  console.log(data);
+  
   if (error) {
 
     console.log(error);
