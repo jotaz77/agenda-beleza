@@ -63,8 +63,32 @@
     id="addonsList"
     class="space-y-2"
   ></div>
-
-</div>
+  
+  <div
+    id="totalsArea"
+    class="
+      mt-4
+      bg-gray-100
+      rounded-2xl
+      p-4
+    "
+  >
+  
+    <p
+      id="totalPrice"
+      class="font-semibold"
+    >
+      💰 Total: R$ 0,00
+    </p>
+  
+    <p
+      id="totalDuration"
+      class="text-sm text-[#696969]"
+    >
+      ⏰ Tempo total: 0 min
+    </p>
+  
+  </div>
 
   <label class="font-semibold">Data</label>
   <input type="date" id="date" class="w-full p-3 border rounded-xl mb-4">
@@ -168,9 +192,14 @@ function calcularDuracaoTotal() {
       serviceSelect.selectedIndex
     ];
 
-  let total =
+  let totalDuration =
     parseInt(
-      selected.dataset.duration || 30
+      selected.dataset.duration || 0
+    );
+
+  let totalPrice =
+    parseFloat(
+      selected.dataset.price || 0
     );
 
   const checkboxes =
@@ -180,33 +209,30 @@ function calcularDuracaoTotal() {
 
   checkboxes.forEach(cb => {
 
-    total += parseInt(
+    totalDuration += parseInt(
       cb.dataset.duration || 0
+    );
+
+    totalPrice += parseFloat(
+      cb.dataset.price || 0
     );
 
   });
 
-  selectedDuration = total;
+  selectedDuration =
+    totalDuration;
+
+  document.getElementById(
+    "totalPrice"
+  ).innerText =
+    `💰 Total: R$ ${totalPrice.toFixed(2)}`;
+
+  document.getElementById(
+    "totalDuration"
+  ).innerText =
+    `⏰ Tempo total: ${totalDuration} min`;
 
 }
-
-// 🔵 ADICIONAIS
-async function carregarAddons() {
-
-  const { data, error } =
-    await supabase
-      .from("service_addons")
-      .select("*")
-      .eq("user_id", ownerId);
-  
-  console.log(data);
-  
-  if (error) {
-
-    console.log(error);
-
-    return;
-  }
 
   if (!data || data.length === 0) {
 
@@ -335,6 +361,10 @@ try {
 
   }
 
+  if (services.length > 0) {
+    calcularDuracaoTotal();
+  }
+
 } catch(err) {
 
   alert("Erro ao carregar serviços");
@@ -344,7 +374,7 @@ try {
 }
 
 serviceSelect.addEventListener("change", () => {
-
+  
   const selected =
     serviceSelect.options[
       serviceSelect.selectedIndex
@@ -386,6 +416,8 @@ serviceSelect.addEventListener("change", () => {
     render(date);
   }
 
+  calcularDuracaoTotal();
+  
 });
 
 const slotInterval =
