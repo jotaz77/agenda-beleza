@@ -161,6 +161,35 @@ const addonsList =
 
 let selectedAddons = [];
 
+function calcularDuracaoTotal() {
+
+  const selected =
+    serviceSelect.options[
+      serviceSelect.selectedIndex
+    ];
+
+  let total =
+    parseInt(
+      selected.dataset.duration || 30
+    );
+
+  const checkboxes =
+    document.querySelectorAll(
+      '#addonsList input[type="checkbox"]:checked'
+    );
+
+  checkboxes.forEach(cb => {
+
+    total += parseInt(
+      cb.dataset.duration || 0
+    );
+
+  });
+
+  selectedDuration = total;
+
+}
+
 // 🔵 ADICIONAIS
 async function carregarAddons() {
 
@@ -215,6 +244,12 @@ async function carregarAddons() {
   
     checkbox.dataset.duration =
       addon.duration;
+
+    checkbox.addEventListener("change", () => {
+
+      calcularDuracaoTotal();
+    
+    });
   
     const span =
       document.createElement("span");
@@ -315,10 +350,7 @@ serviceSelect.addEventListener("change", () => {
       serviceSelect.selectedIndex
     ];
 
-  selectedDuration =
-    parseInt(
-      selected.dataset.duration || 30
-    );
+  calcularDuracaoTotal();
 
   // 📋 DESCRIÇÃO
   const descriptionBox =
