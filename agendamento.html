@@ -200,10 +200,72 @@ async function carregarAddons() {
     return;
   }
 
+  if (!data || data.length === 0) {
+
+    addonsArea.style.display = "block";
+
+    return;
+
+  }
+
+  addonsArea.style.display = "block";
+
+  addonsList.innerHTML = "";
+
+  data.forEach(addon => {
+
+    const label =
+      document.createElement("label");
+
+    label.className =
+      "flex items-center gap-2 bg-white border rounded-xl p-3 cursor-pointer";
+
+    const checkbox =
+      document.createElement("input");
+
+    checkbox.type = "checkbox";
+
+    checkbox.value = addon.id;
+
+    checkbox.dataset.name =
+      addon.name;
+
+    checkbox.dataset.price =
+      addon.price;
+
+    checkbox.dataset.duration =
+      addon.duration;
+
+    checkbox.addEventListener("change", () => {
+
+      calcularDuracaoTotal();
+
+    });
+
+    const span =
+      document.createElement("span");
+
+    span.innerText =
+      `📌 ${addon.name} (+R$${Number(addon.price).toFixed(2)})`;
+
+    label.appendChild(checkbox);
+
+    label.appendChild(span);
+
+    addonsList.appendChild(label);
+
+  });
+
+}
+
+function calcularDuracaoTotal() {
+
   const selected =
     serviceSelect.options[
       serviceSelect.selectedIndex
     ];
+
+  if (!selected) return;
 
   let totalDuration =
     parseInt(
@@ -247,66 +309,6 @@ async function carregarAddons() {
 
 }
 
-function calcularDuracaoTotal() {
-
-  if (!data || data.length === 0) {
-
-    alert("Nenhum adicional encontrado");
-  
-    addonsArea.style.display = "block";
-  
-    return;
-}
-  
-  addonsArea.style.display = "block";
-
-  addonsList.innerHTML = "";
-
-  data.forEach(addon => {
-
-    const label =
-      document.createElement("label");
-  
-    label.className =
-      "flex items-center gap-2 bg-white border rounded-xl p-3 cursor-pointer";
-  
-    const checkbox =
-      document.createElement("input");
-  
-    checkbox.type = "checkbox";
-  
-    checkbox.value = addon.id;
-  
-    checkbox.dataset.name =
-      addon.name;
-  
-    checkbox.dataset.price =
-      addon.price;
-  
-    checkbox.dataset.duration =
-      addon.duration;
-
-    checkbox.addEventListener("change", () => {
-
-      calcularDuracaoTotal();
-    
-    });
-  
-    const span =
-      document.createElement("span");
-  
-    span.innerText =
-      `📌 ${addon.name} (+R$${Number(addon.price).toFixed(2)})`;
-  
-    label.appendChild(checkbox);
-  
-    label.appendChild(span);
-  
-    addonsList.appendChild(label);
-  
-  });
-
-}
 ownerId = profile.id;
 
 await carregarAddons();
