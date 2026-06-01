@@ -187,6 +187,21 @@ let selectedAddons = [];
 
 function calcularDuracaoTotal() {
 
+  async function carregarAddons() {
+
+  const { data, error } =
+    await supabase
+      .from("service_addons")
+      .select("*")
+      .eq("user_id", ownerId);
+
+  if (error) {
+
+    console.log(error);
+
+    return;
+  }
+
   const selected =
     serviceSelect.options[
       serviceSelect.selectedIndex
