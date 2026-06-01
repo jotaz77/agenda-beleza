@@ -545,6 +545,23 @@ const selectedService =
 const service =
   selectedService.dataset.name;
 
+const addonsSelecionados = [];
+
+document
+  .querySelectorAll(
+    '#addonsList input[type="checkbox"]:checked'
+  )
+  .forEach(cb => {
+
+    addonsSelecionados.push({
+      id: cb.value,
+      name: cb.dataset.name,
+      price: Number(cb.dataset.price),
+      duration: Number(cb.dataset.duration)
+    });
+
+  });
+
     let photo_urls = [];
 
     if (photoFiles.length > 2) {
@@ -593,7 +610,8 @@ const service =
         time: selectedSlot,
         status: "booked",
         description,
-        photo_urls
+        photo_urls,
+        addons: addonsSelecionados
       }]);
 
     if (error) {
