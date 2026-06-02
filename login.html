@@ -166,6 +166,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (error || !data?.user || !data?.session) {
+      msg.className =
+        "text-center text-sm mt-4 text-red-400 min-h-[20px]";
       msg.innerText = error?.message || "Login inválido";
       return;
     }
@@ -195,6 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (error) {
+      msg.className =
+        "text-center text-sm mt-4 text-red-400 min-h-[20px]";
       msg.innerText = error.message;
       return;
     }
@@ -205,7 +209,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    msg.innerText = "Conta criada! Verifique seu email ou clique em entrar.";
+    msg.className =
+      "text-center text-sm mt-4 text-green-400 min-h-[20px]";
+
+    msg.innerText =
+      "Conta criada! Verifique seu email ou clique em entrar.";
   });
 
 });
