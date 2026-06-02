@@ -155,6 +155,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
+    msg.className =
+      "text-center text-sm mt-4 text-blue-300 min-h-[20px]";
+    
     msg.innerText = "Entrando...";
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -181,6 +184,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    msg.className =
+      "text-center text-sm mt-4 text-blue-300 min-h-[20px]";
+    
     msg.innerText = "Criando conta...";
 
     const { data, error } = await supabase.auth.signUp({
